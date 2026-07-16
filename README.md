@@ -1,2 +1,2 @@
-# KSP FIR Intelligence Dashboard — Prototype
+# KSP FIR Intelligence Dashboard Prototype
 
