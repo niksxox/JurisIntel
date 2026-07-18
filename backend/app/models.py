@@ -289,6 +289,26 @@ class ArrestSurrender(Base):
     io = relationship("Employee")
 
 
+class AuditLog(Base):
+    """
+    Explainable-AI / access audit trail. Every chatbot turn, NL search, profile
+    lookup, and PDF export writes a row here: who asked, what was asked, what
+    the system matched it to, and what was returned. This is what makes the
+    AI's answers explainable after the fact -- you can always trace a response
+    back to the exact filters and case IDs that produced it.
+    """
+    __tablename__ = "audit_log"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    timestamp = Column(DateTime)
+    user_role = Column(String)
+    user_name = Column(String)
+    action_type = Column(String)   # chat | nl_search | profile_view | pdf_export | scene_reconstruction
+    query_text = Column(Text)
+    matched_filters = Column(Text)     # JSON string
+    referenced_case_ids = Column(Text)  # JSON string, e.g. "[3,17,42]"
+    result_summary = Column(Text)
+
+
 class ChargesheetDetails(Base):
     __tablename__ = "chargesheet_details"
     CSID = Column(Integer, primary_key=True)

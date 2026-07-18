@@ -1,7 +1,7 @@
 from collections import defaultdict
 from typing import Optional
 
-from fastapi import FastAPI, Depends, HTTPException, Query
+from fastapi import FastAPI, Depends, HTTPException, Query, Header
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
 from sqlalchemy.orm import Session
@@ -10,7 +10,10 @@ from sqlalchemy import func
 from . import models
 from .database import get_db, engine
 from .nl_parser import parse_query
-from .pdf_export import build_case_pdf
+from .pdf_export import build_case_pdf, build_chat_pdf
+from . import audit, rbac, trends, scene
+from .chat import handle_chat, build_profile
+from .risk import compute_risk
 
 app = FastAPI(title="KSP FIR Dashboard API")
 
@@ -163,11 +166,16 @@ def list_cases(
 
 
 @app.get("/api/cases/{case_id}")
-def get_case(case_id: int, db: Session = Depends(get_db)):
+def get_case(case_id: int, db: Session = Depends(get_db), x_user_role: Optional[str] = Header(None)):
     c = db.query(models.CaseMaster).get(case_id)
     if not c:
         raise HTTPException(404, "Case not found")
-    return case_to_detail(c)
+    role = rbac.resolve_role(x_user_role)
+    detail = rbac.redact_case_detail(case_to_detail(c), role)
+    audit.log_action(db, user_role=role, user_name=None, action_type="case_view",
+                      query_text=str(case_id), referenced_case_ids=[case_id],
+                      result_summary=f"Viewed case {c.CrimeNo}")
+    return detail
 
 
 @app.get("/api/cases/{case_id}/pdf")
@@ -186,10 +194,11 @@ def export_case_pdf(case_id: int, db: Session = Depends(get_db)):
 # ---------- NL query (AI module integration point) ----------
 
 @app.post("/api/nl-query")
-def nl_query(payload: dict, db: Session = Depends(get_db)):
+def nl_query(payload: dict, db: Session = Depends(get_db), x_user_role: Optional[str] = Header(None)):
     text = (payload or {}).get("text", "")
     if not text.strip():
         raise HTTPException(400, "text is required")
+    role = rbac.resolve_role(x_user_role)
     parsed = parse_query(text)
     results = list_cases(
         district=parsed["filters"].get("district"),
@@ -202,6 +211,10 @@ def nl_query(payload: dict, db: Session = Depends(get_db)):
         keyword=parsed["filters"].get("keyword"),
         db=db,
     )
+    audit.log_action(db, user_role=role, user_name=None, action_type="nl_search",
+                      query_text=text, matched_filters=parsed["filters"],
+                      referenced_case_ids=[r["id"] for r in results],
+                      result_summary=f"{len(results)} result(s)")
     return {"filters": parsed["filters"], "explanation": parsed["explanation"], "results": results}
 
 
@@ -283,3 +296,98 @@ def network(
 @app.get("/api/health")
 def health():
     return {"status": "ok"}
+
+
+# ---------- roles ----------
+
+@app.get("/api/roles")
+def roles():
+    return {"roles": rbac.ROLES}
+
+
+# ---------- criminal profile (full history + risk score) ----------
+
+@app.get("/api/criminals/{name}/profile")
+def criminal_profile(name: str, db: Session = Depends(get_db), x_user_role: Optional[str] = Header(None)):
+    role = rbac.resolve_role(x_user_role)
+    profile = build_profile(db, name)
+    if not profile:
+        raise HTTPException(404, "No accused person matching that name")
+    if role not in rbac.FULL_PII_ROLES:
+        profile = {**profile, "name": profile["name"] if role in rbac.FULL_CASE_DETAIL_ROLES else "[redacted]"}
+    audit.log_action(db, user_role=role, user_name=None, action_type="profile_view",
+                      query_text=name, referenced_case_ids=profile["case_ids"],
+                      result_summary=f"Risk {profile['risk']['score']} ({profile['risk']['band']})")
+    return profile
+
+
+# ---------- chatbot ----------
+
+@app.post("/api/chat")
+def chat(payload: dict, db: Session = Depends(get_db), x_user_role: Optional[str] = Header(None)):
+    message = (payload or {}).get("message", "")
+    history = (payload or {}).get("history", [])
+    language = (payload or {}).get("language", "en")
+    if not message.strip():
+        raise HTTPException(400, "message is required")
+    role = rbac.resolve_role(x_user_role)
+
+    result = handle_chat(db, message, history, language)
+
+    audit.log_action(
+        db, user_role=role, user_name=None, action_type="chat",
+        query_text=message, matched_filters=result.get("matched_filters"),
+        referenced_case_ids=result.get("referenced_case_ids", []),
+        result_summary=result["reply"][:200],
+    )
+    return result
+
+
+@app.post("/api/chat/pdf")
+def chat_pdf(payload: dict, db: Session = Depends(get_db), x_user_role: Optional[str] = Header(None)):
+    messages = (payload or {}).get("messages", [])
+    language = (payload or {}).get("language", "en")
+    if not messages:
+        raise HTTPException(400, "messages is required")
+    role = rbac.resolve_role(x_user_role)
+    pdf_bytes = build_chat_pdf(messages, language)
+    audit.log_action(db, user_role=role, user_name=None, action_type="pdf_export",
+                      query_text="chat_transcript", result_summary=f"{len(messages)} messages exported")
+    return Response(
+        content=pdf_bytes, media_type="application/pdf",
+        headers={"Content-Disposition": 'attachment; filename="chat_transcript.pdf"'},
+    )
+
+
+# ---------- trends, hotspots, predictive early warnings ----------
+
+@app.get("/api/trends")
+def get_trends(db: Session = Depends(get_db)):
+    return trends.hotspot_summary(db)
+
+
+# ---------- scene reconstruction ----------
+
+@app.get("/api/cases/{case_id}/scene")
+def case_scene(case_id: int, db: Session = Depends(get_db), x_user_role: Optional[str] = Header(None)):
+    c = db.query(models.CaseMaster).get(case_id)
+    if not c:
+        raise HTTPException(404, "Case not found")
+    role = rbac.resolve_role(x_user_role)
+    detail = rbac.redact_case_detail(case_to_detail(c), role)
+    narrative = scene.build_narrative(detail)
+    svg = scene.build_scene_svg(detail)
+    audit.log_action(db, user_role=role, user_name=None, action_type="scene_reconstruction",
+                      query_text=str(case_id), referenced_case_ids=[case_id])
+    return {"narrative": narrative, "svg": svg}
+
+
+# ---------- audit trail (Admin only) ----------
+
+@app.get("/api/audit-log")
+def audit_log(limit: int = 100, db: Session = Depends(get_db), x_user_role: Optional[str] = Header(None)):
+    role = rbac.resolve_role(x_user_role)
+    if role != "Admin":
+        raise HTTPException(403, "Audit trail is restricted to Admin role")
+    rows = db.query(models.AuditLog).order_by(models.AuditLog.timestamp.desc()).limit(limit).all()
+    return [audit.log_to_dict(r) for r in rows]

@@ -3,12 +3,21 @@ import { api } from "../api";
 
 export default function CaseDetail({ caseId, onClose, onViewNetwork }) {
   const [detail, setDetail] = useState(null);
+  const [scene, setScene] = useState(null);
+  const [sceneLoading, setSceneLoading] = useState(false);
 
   useEffect(() => {
     if (!caseId) return;
     setDetail(null);
+    setScene(null);
     api.case(caseId).then(setDetail).catch(console.error);
   }, [caseId]);
+
+  const loadScene = () => {
+    if (scene) { setScene(null); return; }
+    setSceneLoading(true);
+    api.scene(caseId).then(setScene).catch(console.error).finally(() => setSceneLoading(false));
+  };
 
   if (!caseId) return null;
 
@@ -77,14 +86,30 @@ export default function CaseDetail({ caseId, onClose, onViewNetwork }) {
               </div>
             )}
 
-            <div className="drawer-section" style={{ display: "flex", gap: 8 }}>
+            <div className="drawer-section" style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
               <a className="btn" href={api.pdfUrl(detail.id)} download>
                 Export case report (PDF)
               </a>
               <button className="btn secondary" onClick={() => onViewNetwork(detail.id)}>
                 View network
               </button>
+              <button className="btn secondary" onClick={loadScene}>
+                {scene ? "Hide" : "Reconstruct"} scene
+              </button>
             </div>
+
+            {sceneLoading && <div className="loading-line">RECONSTRUCTING SCENE...</div>}
+
+            {scene && (
+              <div className="drawer-section">
+                <h4>Scene reconstruction (generated)</h4>
+                <div style={{ background: "#0a0f1a", border: "1px solid #24304a", borderRadius: 8, overflow: "hidden", marginBottom: 10 }}
+                     dangerouslySetInnerHTML={{ __html: scene.svg }} />
+                <p style={{ fontSize: 12.5, color: "#c4cce0", lineHeight: 1.6, whiteSpace: "pre-wrap" }}>
+                  {scene.narrative}
+                </p>
+              </div>
+            )}
           </>
         )}
       </div>

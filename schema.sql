@@ -6,6 +6,19 @@ CREATE TABLE act (
 	PRIMARY KEY ("ActCode")
 );
 
+CREATE TABLE audit_log (
+	id INTEGER NOT NULL, 
+	timestamp DATETIME, 
+	user_role VARCHAR, 
+	user_name VARCHAR, 
+	action_type VARCHAR, 
+	query_text TEXT, 
+	matched_filters TEXT, 
+	referenced_case_ids TEXT, 
+	result_summary TEXT, 
+	PRIMARY KEY (id)
+);
+
 CREATE TABLE case_category (
 	"CaseCategoryID" INTEGER NOT NULL, 
 	"LookupValue" VARCHAR NOT NULL, 

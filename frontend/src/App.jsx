@@ -1,21 +1,34 @@
 import React, { useEffect, useState } from "react";
-import { api } from "./api";
+import { api, setRole as setApiRole } from "./api";
 import StatsOverview from "./components/StatsOverview";
 import FilterBar from "./components/FilterBar";
 import CaseTable from "./components/CaseTable";
 import CaseDetail from "./components/CaseDetail";
 import NetworkGraph from "./components/NetworkGraph";
 import SearchPanel from "./components/SearchPanel";
+import ChatbotPanel from "./components/ChatbotPanel";
+import TrendsPanel from "./components/TrendsPanel";
+import AuditLogPanel from "./components/AuditLogPanel";
+import RoleSwitcher from "./components/RoleSwitcher";
 
 const TABS = [
   { id: "overview", label: "Overview" },
   { id: "network", label: "Criminal Network" },
   { id: "search", label: "AI Search" },
+  { id: "chat", label: "AI Assistant" },
+  { id: "trends", label: "Trends & Hotspots" },
+  { id: "audit", label: "Audit Trail" },
 ];
 
 export default function App() {
   const [tab, setTab] = useState("overview");
+  const [role, setRole] = useState("Investigating Officer");
   const [stats, setStats] = useState(null);
+
+  const changeRole = (r) => {
+    setRole(r);
+    setApiRole(r);
+  };
   const [filters, setFilters] = useState({});
   const [cases, setCases] = useState(null);
   const [selectedCase, setSelectedCase] = useState(null);
@@ -60,16 +73,19 @@ export default function App() {
             <div className="brand-sub">Karnataka Police · Datathon 2026 Prototype</div>
           </div>
         </div>
-        <div className="tabs">
-          {TABS.map((t) => (
-            <button
-              key={t.id}
-              className={`tab ${tab === t.id ? "active" : ""}`}
-              onClick={() => setTab(t.id)}
-            >
-              {t.label}
-            </button>
-          ))}
+        <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+          <RoleSwitcher role={role} onChange={changeRole} />
+          <div className="tabs">
+            {TABS.map((t) => (
+              <button
+                key={t.id}
+                className={`tab ${tab === t.id ? "active" : ""}`}
+                onClick={() => setTab(t.id)}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -105,6 +121,12 @@ export default function App() {
       )}
 
       {tab === "search" && <SearchPanel onSelectCase={setSelectedCase} />}
+
+      {tab === "chat" && <ChatbotPanel onSelectCase={setSelectedCase} />}
+
+      {tab === "trends" && <TrendsPanel />}
+
+      {tab === "audit" && <AuditLogPanel role={role} />}
 
       <CaseDetail caseId={selectedCase} onClose={() => setSelectedCase(null)} onViewNetwork={goToNetworkForCase} />
     </div>

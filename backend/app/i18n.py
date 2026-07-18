@@ -1,0 +1,74 @@
+"""
+Template-based localization for chatbot responses. This is NOT machine
+translation -- it's a phrase dictionary covering the fixed response templates
+the chatbot uses, so the demo can genuinely respond in multiple languages
+without an external translation API/key.
+
+Free-text fields pulled from the database (names, brief facts, etc.) stay in
+their original language (English, since that's what's in the FIR records)
+even when the surrounding template is localized. Swapping this for a real
+translation layer (e.g. an LLM call) later only means replacing `t()`.
+
+Supported: English, Hindi, Kannada, Tamil, Telugu, Malayalam.
+"""
+
+LANGUAGES = {
+    "en": "English",
+    "hi": "Hindi",
+    "kn": "Kannada",
+    "ta": "Tamil",
+    "te": "Telugu",
+    "ml": "Malayalam",
+}
+
+PHRASES = {
+    "greeting": {
+        "en": "Hello. Ask me about a case, an accused person, crime trends, or risk scores.",
+        "hi": "नमस्ते। किसी मामले, आरोपी, अपराध प्रवृत्ति या जोखिम स्कोर के बारे में पूछें।",
+        "kn": "ನಮಸ್ಕಾರ. ಪ್ರಕರಣ, ಆರೋಪಿ, ಅಪರಾಧ ಪ್ರವೃತ್ತಿ ಅಥವಾ ಅಪಾಯದ ಅಂಕ ಬಗ್ಗೆ ಕೇಳಿ.",
+        "ta": "வணக்கம். வழக்கு, குற்றம் சாட்டப்பட்டவர், குற்றப் போக்குகள் அல்லது ஆபத்து மதிப்பெண் பற்றி கேளுங்கள்.",
+        "te": "నమస్కారం. కేసు, నిందితుడు, నేర ధోరణులు లేదా రిస్క్ స్కోరు గురించి అడగండి.",
+        "ml": "നമസ്കാരം. കേസ്, പ്രതി, ക്രൈം ട്രെൻഡുകൾ അല്ലെങ്കിൽ റിസ്ക് സ്കോർ എന്നിവയെക്കുറിച്ച് ചോദിക്കുക.",
+    },
+    "no_match": {
+        "en": "I couldn't match that to a person or case in the database. Try a name, or a phrase like 'cases in Mysuru last month'.",
+        "hi": "मुझे डेटाबेस में कोई मेल नहीं मिला। कोई नाम आज़माएं, या 'मैसूरु में पिछले महीने के मामले' जैसा वाक्य।",
+        "kn": "ಡೇಟಾಬೇಸ್‌ನಲ್ಲಿ ಹೊಂದಾಣಿಕೆ ಸಿಗಲಿಲ್ಲ. ಹೆಸರು ಅಥವಾ 'ಮೈಸೂರಿನಲ್ಲಿ ಕಳೆದ ತಿಂಗಳ ಪ್ರಕರಣಗಳು' ಎಂದು ಪ್ರಯತ್ನಿಸಿ.",
+        "ta": "தரவுத்தளத்தில் பொருத்தம் இல்லை. ஒரு பெயரை அல்லது 'மைசூரில் கடந்த மாத வழக்குகள்' போன்ற சொற்றொடரை முயற்சிக்கவும்.",
+        "te": "డేటాబేస్‌లో సరిపోలిక కనబడలేదు. ఒక పేరు లేదా 'మైసూరులో గత నెల కేసులు' వంటి పదబంధాన్ని ప్రయత్నించండి.",
+        "ml": "ഡാറ്റാബേസിൽ പൊരുത്തം കണ്ടെത്തിയില്ല. ഒരു പേര് അല്ലെങ്കിൽ 'മൈസൂരുവിൽ കഴിഞ്ഞ മാസത്തെ കേസുകൾ' എന്ന് ശ്രമിക്കുക.",
+    },
+    "profile_intro": {
+        "en": "Here's what's on file for {name}:",
+        "hi": "{name} के बारे में रिकॉर्ड में यह दर्ज है:",
+        "kn": "{name} ಬಗ್ಗೆ ದಾಖಲೆಯಲ್ಲಿ ಇರುವುದು ಇಲ್ಲಿದೆ:",
+        "ta": "{name} பற்றி பதிவில் உள்ளது இதோ:",
+        "te": "{name} గురించి రికార్డులో ఉన్నది ఇక్కడ ఉంది:",
+        "ml": "{name} യെക്കുറിച്ച് രേഖയിലുള്ളത് ഇതാ:",
+    },
+    "risk_summary": {
+        "en": "Risk score: {score}/100 ({band}). Based on {count} linked case(s) — {formula}",
+        "hi": "जोखिम स्कोर: {score}/100 ({band})। {count} जुड़े मामलों पर आधारित — {formula}",
+        "kn": "ಅಪಾಯದ ಅಂಕ: {score}/100 ({band}). {count} ಸಂಬಂಧಿತ ಪ್ರಕರಣಗಳ ಆಧಾರದ ಮೇಲೆ — {formula}",
+        "ta": "ஆபத்து மதிப்பெண்: {score}/100 ({band}). {count} தொடர்புடைய வழக்குகளின் அடிப்படையில் — {formula}",
+        "te": "రిస్క్ స్కోరు: {score}/100 ({band}). {count} సంబంధిత కేసుల ఆధారంగా — {formula}",
+        "ml": "റിസ്ക് സ്കോർ: {score}/100 ({band}). {count} ബന്ധപ്പെട്ട കേസുകളുടെ അടിസ്ഥാനത്തിൽ — {formula}",
+    },
+    "search_results": {
+        "en": "Found {count} matching case(s). {explanation}",
+        "hi": "{count} मामले मिले। {explanation}",
+        "kn": "{count} ಪ್ರಕರಣಗಳು ಕಂಡುಬಂದಿವೆ. {explanation}",
+        "ta": "{count} வழக்குகள் கிடைத்தன. {explanation}",
+        "te": "{count} కేసులు కనుగొనబడ్డాయి. {explanation}",
+        "ml": "{count} കേസുകൾ കണ്ടെത്തി. {explanation}",
+    },
+}
+
+
+def t(key: str, lang: str = "en", **kwargs) -> str:
+    lang = lang if lang in LANGUAGES else "en"
+    template = PHRASES.get(key, {}).get(lang) or PHRASES.get(key, {}).get("en", "")
+    try:
+        return template.format(**kwargs)
+    except Exception:
+        return template
