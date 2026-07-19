@@ -1,0 +1,46 @@
+# ==========================================
+# Python Version: 3.10.11
+# ==========================================
+
+# Web Framework
+fastapi>=0.110.0,<1.0.0
+uvicorn[standard]>=0.29.0,<1.0.0
+
+# Data Processing
+pandas>=2.1.4,<2.3.0
+numpy>=1.26.4,<2.0.0
+
+# Machine Learning
+scikit-learn>=1.4.2,<1.7.0
+xgboost>=2.0.3,<3.0.0
+joblib>=1.4.2,<2.0.0
+
+# Explainable AI
+shap>=0.45.1,<0.50.0
+
+# NLP
+sentence-transformers>=2.7.0,<4.0.0
+spacy>=3.7.4,<4.0.0
+langdetect>=1.0.9,<2.0.0
+dateparser>=1.2.0,<2.0.0
+
+# Authentication
+PyJWT>=2.8.0,<3.0.0
+
+# Catalyst
+zcatalyst-sdk>=0.0.5
+
+# Configuration
+python-dotenv>=1.0.1,<2.0.0
+pydantic>=2.7.1,<3.0.0
+pydantic-settings>=2.2.1,<3.0.0
+
+# Utilities
+requests>=2.32.3,<3.0.0
+python-multipart>=0.0.9,<1.0.0
+
+# Logging & Serialization
+orjson>=3.10.3,<4.0.0
+
+# Optional (Training/EDA only)
+matplotlib>=3.8.4,<4.0.0

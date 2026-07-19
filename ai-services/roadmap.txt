@@ -1,0 +1,5031 @@
+===============================================================
+CATALYST CRIME ANALYTICS AI MODULE
+PRODUCTION DEVELOPMENT ROADMAP
+PART 1
+Project Foundation, System Architecture, Dataset Design &
+Development Environment
+===============================================================
+
+Version            : 1.0 MVP
+Platform           : Zoho Catalyst
+Language           : Python
+Framework          : FastAPI
+Deployment         : Catalyst AppSail
+Storage            : Catalyst DataStore
+Background Tasks   : Catalyst Functions
+AI Scope           :
+    • Natural Language Processing
+    • Predictive Analytics
+    • Explainable AI
+
+===============================================================
+TABLE OF CONTENTS
+===============================================================
+
+1. Project Overview
+
+2. Business Problem
+
+3. Project Objectives
+
+4. AI Module Responsibilities
+
+5. Scope of Work
+
+6. Out of Scope
+
+7. System Architecture
+
+8. High-Level Workflow
+
+9. Technology Stack
+
+10. Zoho Catalyst Services
+
+11. Development Standards
+
+12. Folder Structure
+
+13. Dataset Design
+
+14. Data Engineering
+
+15. Security Principles
+
+16. Coding Standards
+
+17. Logging Strategy
+
+18. Error Handling Philosophy
+
+19. Performance Goals
+
+20. Deliverables of Phase 1
+
+===============================================================
+1. PROJECT OVERVIEW
+===============================================================
+
+The Karnataka State Crime Records Bureau (SCRB) maintains a large and
+continuously growing repository of crime records collected from more than
+1100 police stations throughout Karnataka.
+
+Traditional crime information systems primarily provide dashboards,
+predefined reports and manual SQL-based searching.
+
+Although these systems store enormous amounts of information, officers
+cannot naturally ask questions like
+
+    "Show cyber frauds reported in Bengaluru during the last 30 days."
+
+or
+
+    "Which districts are expected to become burglary hotspots next month?"
+
+Instead, analysts manually write database queries and interpret reports.
+
+This significantly slows investigations.
+
+The goal of this AI module is to introduce conversational intelligence
+that allows investigators to communicate with crime databases using
+natural language.
+
+Instead of navigating dashboards,
+users simply ask questions.
+
+The AI system performs:
+
+• Query understanding
+
+• Entity extraction
+
+• Secure database querying
+
+• Predictive analytics
+
+• Explainable AI
+
+before returning understandable responses.
+
+===============================================================
+2. BUSINESS PROBLEM
+===============================================================
+
+Current Problems
+
+---------------------------------------
+Problem 1
+---------------------------------------
+
+Crime data exists across multiple districts.
+
+Searching requires technical knowledge.
+
+---------------------------------------
+Problem 2
+---------------------------------------
+
+Investigators cannot quickly discover hidden crime trends.
+
+---------------------------------------
+Problem 3
+---------------------------------------
+
+Crime prediction is not available.
+
+---------------------------------------
+Problem 4
+---------------------------------------
+
+No explanation exists for analytical results.
+
+---------------------------------------
+Problem 5
+---------------------------------------
+
+Large datasets make manual analysis difficult.
+
+---------------------------------------
+Desired Future State
+---------------------------------------
+
+Officer asks:
+
+"Show vehicle thefts in Mysore last month."
+
+↓
+
+AI understands request.
+
+↓
+
+Database queried securely.
+
+↓
+
+Results returned.
+
+↓
+
+If prediction requested,
+AI predicts future hotspots.
+
+↓
+
+Explanation generated.
+
+===============================================================
+3. PROJECT OBJECTIVES
+===============================================================
+
+Primary Objectives
+
+1.
+Allow natural language crime search.
+
+2.
+Support English and Kannada.
+
+3.
+Integrate entirely with Zoho Catalyst.
+
+4.
+Provide crime predictions.
+
+5.
+Provide explainable AI.
+
+6.
+Protect sensitive police information.
+
+7.
+Produce production-quality REST APIs.
+
+===============================================================
+4. AI MODULE RESPONSIBILITIES
+===============================================================
+
+The AI team is ONLY responsible for AI services.
+
+Modules included:
+
+---------------------------------------
+
+Natural Language Processing
+
+---------------------------------------
+
+Responsibilities
+
+• Language detection
+
+• Translation
+
+• Intent detection
+
+• Entity extraction
+
+• SQL generation
+
+---------------------------------------
+
+Prediction Engine
+
+---------------------------------------
+
+Responsibilities
+
+• Hotspot prediction
+
+• Crime forecasting
+
+• Repeat offender prediction
+
+---------------------------------------
+
+Explainability
+
+---------------------------------------
+
+Responsibilities
+
+• SHAP feature importance
+
+• Human-readable explanations
+
+• Confidence interpretation
+
+===============================================================
+5. OUT OF SCOPE
+===============================================================
+
+The following are handled by other teams.
+
+NOT RESPONSIBLE FOR
+
+• Authentication UI
+
+• React frontend
+
+• Dashboard
+
+• User Management
+
+• RBAC UI
+
+• Deployment automation
+
+• Database provisioning
+
+• Mobile applications
+
+• Notification systems
+
+• GIS frontend
+
+===============================================================
+6. HIGH LEVEL SYSTEM ARCHITECTURE
+===============================================================
+
+
+                    User
+
+                      │
+
+                      ▼
+
+                FastAPI Server
+
+                      │
+
+        ┌─────────────┼─────────────┐
+
+        ▼             ▼             ▼
+
+  NLP Engine     Prediction      Explainability
+
+        │             │             │
+
+        └─────────────┼─────────────┘
+
+                      ▼
+
+              Catalyst DataStore
+
+                      │
+
+                      ▼
+
+               JSON Response
+
+
+===============================================================
+7. REQUEST FLOW
+===============================================================
+
+Step 1
+
+Officer submits query.
+
+Example
+
+Show all cyber frauds in Bengaluru.
+
+↓
+
+Step 2
+
+FastAPI validates request.
+
+↓
+
+Step 3
+
+Language Detection
+
+↓
+
+Step 4
+
+Translation (if Kannada)
+
+↓
+
+Step 5
+
+Intent Detection
+
+↓
+
+Step 6
+
+Entity Extraction
+
+↓
+
+Step 7
+
+SQL Generation
+
+↓
+
+Step 8
+
+Catalyst DataStore Query
+
+↓
+
+Step 9
+
+Prediction (optional)
+
+↓
+
+Step 10
+
+Explainability
+
+↓
+
+Step 11
+
+Return JSON Response
+
+===============================================================
+8. COMPLETE AI PIPELINE
+===============================================================
+
+User Query
+
+↓
+
+Translator
+
+↓
+
+Intent Classifier
+
+↓
+
+Entity Parser
+
+↓
+
+SQL Builder
+
+↓
+
+Catalyst DataStore
+
+↓
+
+Prediction Engine
+
+↓
+
+Explanation Engine
+
+↓
+
+Response Formatter
+
+↓
+
+JSON Response
+
+===============================================================
+9. TECHNOLOGY STACK
+===============================================================
+
+Backend
+
+Python 3.12
+
+---------------------------------------
+
+API Framework
+
+FastAPI
+
+---------------------------------------
+
+Model Training
+
+scikit-learn
+
+XGBoost
+
+---------------------------------------
+
+NLP
+
+Sentence Transformers
+
+spaCy
+
+dateparser
+
+---------------------------------------
+
+Explainability
+
+SHAP
+
+---------------------------------------
+
+Database
+
+Catalyst DataStore
+
+---------------------------------------
+
+Deployment
+
+Catalyst AppSail
+
+---------------------------------------
+
+Background Jobs
+
+Catalyst Functions
+
+---------------------------------------
+
+Configuration
+
+python-dotenv
+
+Pydantic Settings
+
+===============================================================
+10. WHY EACH TECHNOLOGY
+===============================================================
+
+FastAPI
+
+Reason
+
+High-performance asynchronous REST API framework.
+
+------------------------------------------------
+
+Pydantic
+
+Reason
+
+Automatic request validation.
+
+------------------------------------------------
+
+Sentence Transformers
+
+Reason
+
+Semantic intent detection.
+
+------------------------------------------------
+
+spaCy
+
+Reason
+
+Named Entity Recognition.
+
+------------------------------------------------
+
+dateparser
+
+Reason
+
+Converts phrases like
+
+"last month"
+
+"this week"
+
+into actual dates.
+
+------------------------------------------------
+
+scikit-learn
+
+Reason
+
+Traditional ML models.
+
+------------------------------------------------
+
+XGBoost
+
+Reason
+
+Highly accurate structured-data prediction.
+
+------------------------------------------------
+
+SHAP
+
+Reason
+
+Explain model predictions.
+
+------------------------------------------------
+
+Zoho Catalyst SDK
+
+Reason
+
+Official integration with Catalyst services.
+
+===============================================================
+11. ZOHO CATALYST SERVICES
+===============================================================
+
+Service 1
+
+Catalyst DataStore
+
+Purpose
+
+Store structured crime records.
+
+Examples
+
+Crime
+
+Victims
+
+Accused
+
+Stations
+
+Prediction History
+
+===============================================================
+
+Service 2
+
+Catalyst Functions
+
+Purpose
+
+Background jobs.
+
+Examples
+
+Nightly model retraining
+
+Batch predictions
+
+Scheduled evaluations
+
+===============================================================
+
+Service 3
+
+Catalyst AppSail
+
+Purpose
+
+Host FastAPI backend.
+
+===============================================================
+
+Service 4
+
+Authentication
+
+Handled externally.
+
+AI only validates received user information.
+
+===============================================================
+12. DEVELOPMENT PRINCIPLES
+===============================================================
+
+Every file must have one responsibility.
+
+Every function must do one task.
+
+No duplicated code.
+
+No unnecessary helper classes.
+
+Readable variable names.
+
+Maximum file size
+
+300 lines.
+
+Maximum function size
+
+40 lines wherever possible.
+
+All public functions documented.
+
+No hardcoded secrets.
+
+Environment variables only.
+
+===============================================================
+13. MINIMAL PROJECT STRUCTURE
+===============================================================
+
+ai-services/
+
+│
+
+├── app.py
+
+├── config.py
+
+├── requirements.txt
+
+│
+
+├── catalyst/
+
+│   └── catalyst_client.py
+
+│
+
+├── nlp/
+
+│   ├── translator.py
+
+│   ├── intent.py
+
+│   ├── entity_parser.py
+
+│   └── sql_generator.py
+
+│
+
+├── prediction/
+
+│   ├── feature_engineering.py
+
+│   ├── hotspot_model.py
+
+│   ├── repeat_offender.py
+
+│   └── train.py
+
+│
+
+├── explainability/
+
+│   ├── feature_importance.py
+
+│   └── reasoning.py
+
+│
+
+├── utils/
+
+│   ├── validators.py
+
+│   ├── logger.py
+
+│   └── exceptions.py
+
+│
+
+├── datasets/
+
+│   ├── README.md
+
+│   ├── fir_schema.json
+
+│   └── crime_types.json
+
+│
+
+├── models/
+
+│   ├── hotspot.pkl
+
+│   ├── offender.pkl
+
+│   ├── encoders.pkl
+
+│   └── metadata.json
+
+│
+
+└── tests/
+
+    ├── test_nlp.py
+
+    └── test_prediction.py
+
+===============================================================
+14. DATASET RECOMMENDATION
+===============================================================
+
+Primary Dataset
+
+Crime in India Dataset
+
+Source
+
+Kaggle
+
+Purpose
+
+Historical training.
+
+Required Columns
+
+Crime Type
+
+District
+
+Police Station
+
+Date
+
+Time
+
+Victim Gender
+
+Crime Category
+
+Latitude
+
+Longitude
+
+Status
+
+===============================================================
+15. FEATURE ENGINEERING
+===============================================================
+
+Temporal Features
+
+Hour
+
+Weekday
+
+Month
+
+Holiday Flag
+
+Festival Flag
+
+Weekend
+
+===============================================================
+
+Location Features
+
+District
+
+Police Station
+
+Latitude
+
+Longitude
+
+Grid Cell
+
+===============================================================
+
+Crime Features
+
+Crime Category
+
+Crime Severity
+
+Crime Frequency
+
+===============================================================
+
+Historical Features
+
+Previous Crimes
+
+Previous Arrests
+
+Repeat Offender Count
+
+Crime Density
+
+===============================================================
+16. DATASTORE DESIGN
+===============================================================
+
+Tables
+
+FIR
+
+Victim
+
+Accused
+
+CrimeLocation
+
+PredictionHistory
+
+AuditLog
+
+===============================================================
+17. SECURITY PRINCIPLES
+===============================================================
+
+Every request validated.
+
+Parameterized SQL only.
+
+Allow-listed tables.
+
+Allow-listed columns.
+
+Maximum request size enforced.
+
+Sensitive data masked.
+
+Audit logging mandatory.
+
+Timeout protection enabled.
+
+Never expose stack traces.
+
+Role validation before queries.
+
+===============================================================
+18. LOGGING STRATEGY
+===============================================================
+
+Every request generates
+
+Request ID
+
+Timestamp
+
+Execution Time
+
+User ID
+
+Role
+
+Intent
+
+Status
+
+Prediction Status
+
+Errors
+
+Logs stored in
+
+AuditLog
+
+inside Catalyst DataStore.
+
+===============================================================
+19. PERFORMANCE TARGETS
+===============================================================
+
+Average API Response
+
+< 500 ms
+
+Prediction
+
+< 250 ms
+
+Translation
+
+< 300 ms
+
+Intent Detection
+
+< 150 ms
+
+Database Query
+
+< 200 ms
+
+===============================================================
+20. PHASE 1 DELIVERABLES
+===============================================================
+
+At the end of Phase 1 the development team should have:
+
+✓ Complete project structure
+
+✓ FastAPI application initialized
+
+✓ Catalyst DataStore connected
+
+✓ Catalyst Functions configured
+
+✓ Environment configuration completed
+
+✓ Dataset imported
+
+✓ Database schema finalized
+
+✓ Logging framework ready
+
+✓ Validation framework implemented
+
+✓ Security baseline completed
+
+✓ Development standards documented
+
+===============================================================
+END OF PART 1
+===============================================================
+
+
+===============================================================
+CATALYST CRIME ANALYTICS AI MODULE
+PRODUCTION DEVELOPMENT ROADMAP
+PART 2
+Phase 1 - Natural Language Processing (NLP)
+===============================================================
+
+Version            : 1.0 MVP
+Objective          : Convert Natural Language into Secure
+                     Catalyst DataStore Queries
+
+===============================================================
+TABLE OF CONTENTS
+===============================================================
+
+1. NLP Overview
+
+2. Complete NLP Workflow
+
+3. NLP Folder Structure
+
+4. app.py
+
+5. config.py
+
+6. catalyst_client.py
+
+7. translator.py
+
+8. intent.py
+
+9. entity_parser.py
+
+10. sql_generator.py
+
+11. API Contracts
+
+12. Security
+
+13. Testing
+
+===============================================================
+1. NLP OVERVIEW
+===============================================================
+
+The Natural Language Processing (NLP) module is responsible for
+understanding what an investigator is asking.
+
+Instead of allowing officers to manually search thousands of FIR
+records, the NLP engine converts natural language into a structured,
+validated database query.
+
+Example
+
+User Input
+
+"Show cyber fraud cases in Bengaluru reported last month."
+
+↓
+
+Language Detection
+
+↓
+
+Translation (if Kannada)
+
+↓
+
+Intent Detection
+
+↓
+
+Entity Extraction
+
+↓
+
+SQL Generation
+
+↓
+
+Catalyst DataStore
+
+↓
+
+JSON Response
+
+===============================================================
+2. COMPLETE NLP WORKFLOW
+===============================================================
+
+Step 1
+
+Receive User Request
+
+↓
+
+Step 2
+
+Validate JSON Request
+
+↓
+
+Step 3
+
+Language Detection
+
+↓
+
+Step 4
+
+Translate Kannada to English
+
+↓
+
+Step 5
+
+Clean User Input
+
+↓
+
+Step 6
+
+Intent Detection
+
+↓
+
+Step 7
+
+Named Entity Recognition
+
+↓
+
+Step 8
+
+Date Resolution
+
+↓
+
+Step 9
+
+Entity Validation
+
+↓
+
+Step 10
+
+Generate Safe SQL
+
+↓
+
+Step 11
+
+Parameter Validation
+
+↓
+
+Step 12
+
+Execute Query
+
+↓
+
+Step 13
+
+Return Structured JSON
+
+===============================================================
+3. NLP FOLDER STRUCTURE
+===============================================================
+
+nlp/
+
+│
+
+├── translator.py
+
+├── intent.py
+
+├── entity_parser.py
+
+└── sql_generator.py
+
+Every file has exactly one responsibility.
+
+===============================================================
+4. app.py
+===============================================================
+
+Purpose
+
+Entry point of the AI service.
+
+Responsibilities
+
+• Start FastAPI application
+
+• Register API routes
+
+• Handle exceptions
+
+• Validate requests
+
+• Call NLP pipeline
+
+• Return JSON
+
+Main Endpoints
+
+GET /health
+
+Returns
+
+{
+    "status":"healthy"
+}
+
+---------------------------------------------------------------
+
+POST /chat
+
+Purpose
+
+Main conversational endpoint.
+
+Input
+
+{
+    "query":"Show cyber frauds in Bengaluru",
+    "user_id":"12345",
+    "role":"Investigator"
+}
+
+Workflow
+
+Validate request
+
+↓
+
+Call Translator
+
+↓
+
+Call Intent Detector
+
+↓
+
+Call Entity Parser
+
+↓
+
+Call SQL Generator
+
+↓
+
+Query Catalyst
+
+↓
+
+Return Response
+
+---------------------------------------------------------------
+
+POST /query
+
+Purpose
+
+Direct SQL endpoint for privileged users.
+
+Only available to
+
+Investigator
+
+Admin
+
+===============================================================
+Request Validation
+===============================================================
+
+Check
+
+✓ JSON Format
+
+✓ Query Length
+
+✓ User ID
+
+✓ Role
+
+✓ Empty Input
+
+Reject
+
+Null values
+
+Oversized payloads
+
+Unknown roles
+
+===============================================================
+Response Format
+===============================================================
+
+{
+    "status":"success",
+
+    "request_id":"UUID",
+
+    "intent":"SEARCH_FIR",
+
+    "entities":{},
+
+    "results":[ ],
+
+    "duration_ms":125
+}
+
+===============================================================
+5. config.py
+===============================================================
+
+Purpose
+
+Store all runtime configuration.
+
+Never hardcode values.
+
+Everything comes from .env
+
+Required Variables
+
+CATALYST_ACCOUNT_ID
+
+CATALYST_PROJECT_ID
+
+CATALYST_API_KEY
+
+JWT_SECRET
+
+MODEL_DIRECTORY
+
+LOG_LEVEL
+
+MAX_QUERY_LENGTH
+
+===============================================================
+Constants
+===============================================================
+
+SUPPORTED_LANGUAGES
+
+English
+
+Kannada
+
+--------------------------------
+
+SUPPORTED_INTENTS
+
+SEARCH_FIR
+
+SEARCH_CASE
+
+HOTSPOT_PREDICTION
+
+TREND_ANALYSIS
+
+REPEAT_OFFENDER
+
+--------------------------------
+
+MAX_QUERY_LENGTH
+
+1000 characters
+
+--------------------------------
+
+MAX_RESULTS
+
+100
+
+--------------------------------
+
+DEFAULT_TIMEOUT
+
+30 seconds
+
+===============================================================
+6. catalyst_client.py
+===============================================================
+
+Purpose
+
+Only communication layer between AI and Catalyst.
+
+Responsibilities
+
+Connect
+
+Read
+
+Insert
+
+Update
+
+Parameterized Query
+
+Logging
+
+Retry
+
+Timeout
+
+===============================================================
+Main Class
+===============================================================
+
+CatalystClient
+
+Methods
+
+connect()
+
+check_connection()
+
+execute_query()
+
+insert_prediction()
+
+insert_audit_log()
+
+fetch_schema()
+
+close()
+
+===============================================================
+Method Details
+===============================================================
+
+connect()
+
+Creates Catalyst SDK object.
+
+Validates credentials.
+
+Raises exception if connection fails.
+
+---------------------------------------------------------------
+
+execute_query()
+
+Input
+
+Table
+
+Filters
+
+Parameters
+
+Output
+
+List of Records
+
+Example
+
+execute_query(
+
+table="FIR",
+
+filters="CrimeType=? AND District=?",
+
+parameters=["Cyber Fraud","Bengaluru"]
+
+)
+
+===============================================================
+Safety Rules
+===============================================================
+
+Never concatenate SQL strings.
+
+Wrong
+
+SELECT * FROM FIR WHERE District='"
+
++ user_input
+
+Correct
+
+SELECT * FROM FIR
+
+WHERE District=?
+
+===============================================================
+Retry Strategy
+===============================================================
+
+Attempt 1
+
+↓
+
+Attempt 2
+
+↓
+
+Attempt 3
+
+↓
+
+Raise Exception
+
+===============================================================
+7. translator.py
+===============================================================
+
+Purpose
+
+Detect language.
+
+Translate Kannada into English.
+
+===============================================================
+Main Functions
+===============================================================
+
+detect_language()
+
+translate()
+
+process()
+
+===============================================================
+detect_language()
+===============================================================
+
+Input
+
+Raw User Query
+
+Output
+
+English
+
+Kannada
+
+Algorithm
+
+Check Kannada Unicode Range
+
+OR
+
+Language Detection Library
+
+===============================================================
+translate()
+===============================================================
+
+Uses
+
+Zoho Zia Translation API
+
+Input
+
+ಬೆಂಗಳೂರುದಲ್ಲಿನ ಸೈಬರ್ ಅಪರಾಧಗಳು
+
+Output
+
+Cyber crimes in Bengaluru
+
+===============================================================
+If Translation Fails
+===============================================================
+
+Return Original Query
+
+Set
+
+translation_status
+
+FAILED
+
+Continue Pipeline
+
+Never crash.
+
+===============================================================
+process()
+===============================================================
+
+Complete Workflow
+
+Detect
+
+↓
+
+Translate
+
+↓
+
+Normalize
+
+↓
+
+Return
+
+{
+    "language":"Kannada",
+
+    "translated_query":"Cyber crime in Bengaluru"
+}
+
+===============================================================
+8. intent.py
+===============================================================
+
+Purpose
+
+Understand what user wants.
+
+===============================================================
+Supported Intents
+===============================================================
+
+SEARCH_FIR
+
+--------------------------------
+
+SEARCH_CASE
+
+--------------------------------
+
+HOTSPOT_PREDICTION
+
+--------------------------------
+
+TREND_ANALYSIS
+
+--------------------------------
+
+REPEAT_OFFENDER
+
+===============================================================
+Intent Detection Process
+===============================================================
+
+User Query
+
+↓
+
+Sentence Transformer
+
+↓
+
+Embeddings
+
+↓
+
+Cosine Similarity
+
+↓
+
+Highest Matching Intent
+
+===============================================================
+Examples
+===============================================================
+
+"Show thefts"
+
+↓
+
+SEARCH_FIR
+
+--------------------------------
+
+"Predict tomorrow's hotspot"
+
+↓
+
+HOTSPOT_PREDICTION
+
+--------------------------------
+
+"Find accused"
+
+↓
+
+SEARCH_CASE
+
+--------------------------------
+
+"Crime trends"
+
+↓
+
+TREND_ANALYSIS
+
+===============================================================
+Output
+===============================================================
+
+{
+    "intent":"SEARCH_FIR",
+
+    "confidence":0.96
+}
+
+===============================================================
+Confidence Threshold
+===============================================================
+
+0.70
+
+Below Threshold
+
+↓
+
+Fallback
+
+SEARCH_FIR
+
+===============================================================
+9. entity_parser.py
+===============================================================
+
+Purpose
+
+Extract important information.
+
+===============================================================
+Entities
+===============================================================
+
+Crime Type
+
+District
+
+Police Station
+
+Date
+
+Time
+
+Officer Name
+
+Victim Name
+
+Accused Name
+
+===============================================================
+Example
+===============================================================
+
+Input
+
+Show cyber frauds in Bengaluru during January.
+
+Output
+
+Crime Type
+
+Cyber Fraud
+
+District
+
+Bengaluru
+
+Date
+
+January
+
+===============================================================
+Libraries
+===============================================================
+
+spaCy
+
+dateparser
+
+===============================================================
+Date Resolution
+===============================================================
+
+Input
+
+Last Month
+
+↓
+
+Output
+
+2026-06-01
+
+2026-06-30
+
+===============================================================
+Validation
+===============================================================
+
+District exists
+
+Crime exists
+
+Date valid
+
+Station valid
+
+===============================================================
+Output
+===============================================================
+
+{
+
+"district":"Bengaluru",
+
+"crime_type":"Cyber Fraud",
+
+"start_date":"2026-06-01",
+
+"end_date":"2026-06-30"
+
+}
+
+===============================================================
+10. sql_generator.py
+===============================================================
+
+Purpose
+
+Generate secure SQL.
+
+===============================================================
+Input
+===============================================================
+
+Intent
+
++
+
+Entities
+
+===============================================================
+Output
+===============================================================
+
+Parameterized Query
+
++
+
+Parameters
+
+===============================================================
+Example
+===============================================================
+
+Intent
+
+SEARCH_FIR
+
+Entities
+
+Crime Type
+
+Cyber Fraud
+
+District
+
+Bengaluru
+
+===============================================================
+Generated SQL
+===============================================================
+
+SELECT *
+
+FROM FIR
+
+WHERE CrimeType=?
+
+AND District=?
+
+===============================================================
+Parameters
+===============================================================
+
+[
+
+"Cyber Fraud",
+
+"Bengaluru"
+
+]
+
+===============================================================
+Validation
+===============================================================
+
+Allowed Tables
+
+✓ FIR
+
+✓ Victim
+
+✓ Accused
+
+✓ Station
+
+Allowed Columns
+
+CrimeType
+
+District
+
+Date
+
+Status
+
+Reject
+
+DROP
+
+DELETE
+
+ALTER
+
+TRUNCATE
+
+INSERT
+
+UPDATE
+
+===============================================================
+11. API CONTRACT
+===============================================================
+
+POST /chat
+
+Request
+
+{
+
+"query":"Show thefts in Mysore"
+
+}
+
+---------------------------------------------------------------
+
+Response
+
+{
+
+"status":"success",
+
+"intent":"SEARCH_FIR",
+
+"entities":{
+
+"district":"Mysore",
+
+"crime_type":"Theft"
+
+},
+
+"results":[ ]
+
+}
+
+===============================================================
+12. SECURITY CHECKLIST
+===============================================================
+
+✓ Request Validation
+
+✓ SQL Injection Prevention
+
+✓ Allow-listed Tables
+
+✓ Allow-listed Columns
+
+✓ Parameterized SQL
+
+✓ Timeout
+
+✓ Rate Limiting Hook
+
+✓ Logging
+
+✓ No Stack Traces
+
+✓ Generic Errors
+
+===============================================================
+13. TESTING CHECKLIST
+===============================================================
+
+Translator
+
+✓ Kannada
+
+✓ English
+
+✓ Mixed Language
+
+--------------------------------
+
+Intent Detection
+
+✓ Correct Intent
+
+✓ Low Confidence
+
+✓ Unknown Query
+
+--------------------------------
+
+Entity Parser
+
+✓ Dates
+
+✓ District
+
+✓ Crime Type
+
+✓ Officer
+
+--------------------------------
+
+SQL Generator
+
+✓ Valid SQL
+
+✓ Injection Blocked
+
+✓ Parameter Validation
+
+--------------------------------
+
+Integration
+
+✓ User Query
+
+↓
+
+Translator
+
+↓
+
+Intent
+
+↓
+
+Entities
+
+↓
+
+SQL
+
+↓
+
+Catalyst
+
+↓
+
+JSON
+
+===============================================================
+PHASE 1 COMPLETION CRITERIA
+===============================================================
+
+✓ User can ask crime-related questions.
+
+✓ English and Kannada supported.
+
+✓ Intent correctly identified.
+
+✓ Entities correctly extracted.
+
+✓ Safe SQL generated.
+
+✓ Catalyst queried successfully.
+
+✓ JSON returned.
+
+✓ Security checks passed.
+
+✓ Logging enabled.
+
+===============================================================
+END OF PART 2
+===============================================================
+
+
+===============================================================
+CATALYST CRIME ANALYTICS AI MODULE
+PRODUCTION DEVELOPMENT ROADMAP
+PART 3
+Phase 2 - Predictive Analytics & Machine Learning
+===============================================================
+
+Version            : 1.0 MVP
+Objective          : Predict future crime trends using historical
+                     crime records stored in Catalyst DataStore.
+
+===============================================================
+TABLE OF CONTENTS
+===============================================================
+
+1. Phase Overview
+
+2. Prediction Architecture
+
+3. Folder Structure
+
+4. feature_engineering.py
+
+5. hotspot_model.py
+
+6. repeat_offender.py
+
+7. train.py
+
+8. Model Lifecycle
+
+9. Prediction APIs
+
+10. Testing
+
+11. Security
+
+12. Phase Completion Criteria
+
+===============================================================
+1. PHASE OVERVIEW
+===============================================================
+
+The Predictive Analytics module converts historical crime data into
+future insights.
+
+Instead of only answering existing crime records, this module answers
+questions such as
+
+• Which district is likely to become a crime hotspot?
+
+• Which areas may experience increased cyber crime next month?
+
+• Is an accused likely to become a repeat offender?
+
+• What crime trend is expected next week?
+
+This module uses Machine Learning models trained on historical FIR data.
+
+===============================================================
+2. PREDICTION ARCHITECTURE
+===============================================================
+
+Catalyst DataStore
+
+↓
+
+Feature Engineering
+
+↓
+
+Training Dataset
+
+↓
+
+Machine Learning Model
+
+↓
+
+Model Evaluation
+
+↓
+
+Model Saving
+
+↓
+
+Prediction API
+
+↓
+
+JSON Response
+
+===============================================================
+Prediction Pipeline
+===============================================================
+
+Historical Crime Data
+
+↓
+
+Cleaning
+
+↓
+
+Feature Engineering
+
+↓
+
+Train/Test Split
+
+↓
+
+Model Training
+
+↓
+
+Evaluation
+
+↓
+
+Save Model
+
+↓
+
+Inference API
+
+↓
+
+Prediction
+
+===============================================================
+3. FOLDER STRUCTURE
+===============================================================
+
+prediction/
+
+│
+
+├── feature_engineering.py
+
+├── hotspot_model.py
+
+├── repeat_offender.py
+
+└── train.py
+
+models/
+
+│
+
+├── hotspot.pkl
+
+├── offender.pkl
+
+├── encoders.pkl
+
+└── metadata.json
+
+===============================================================
+4. feature_engineering.py
+===============================================================
+
+Purpose
+
+Prepare historical data for Machine Learning.
+
+Responsibilities
+
+• Load records
+
+• Clean dataset
+
+• Handle missing values
+
+• Create new features
+
+• Encode categorical variables
+
+• Normalize numerical values
+
+• Save encoders
+
+===============================================================
+Main Class
+===============================================================
+
+FeatureEngineer
+
+===============================================================
+Functions
+===============================================================
+
+load_training_data()
+
+clean_data()
+
+extract_temporal_features()
+
+extract_location_features()
+
+extract_crime_features()
+
+extract_history_features()
+
+encode_features()
+
+normalize_features()
+
+save_encoders()
+
+===============================================================
+load_training_data()
+===============================================================
+
+Purpose
+
+Read historical records from Catalyst DataStore.
+
+Tables
+
+FIR
+
+Victim
+
+Accused
+
+CrimeLocation
+
+Output
+
+Pandas DataFrame
+
+===============================================================
+clean_data()
+===============================================================
+
+Responsibilities
+
+Remove duplicate FIRs
+
+Remove invalid dates
+
+Fill missing values
+
+Drop corrupted rows
+
+Remove impossible coordinates
+
+===============================================================
+extract_temporal_features()
+===============================================================
+
+Input
+
+Date
+
+Time
+
+Generated Features
+
+Hour
+
+Weekday
+
+Month
+
+Quarter
+
+Weekend
+
+Holiday
+
+Festival
+
+Season
+
+Example
+
+2026-06-15 22:30
+
+↓
+
+Hour = 22
+
+Weekday = Monday
+
+Month = June
+
+Night = True
+
+===============================================================
+extract_location_features()
+===============================================================
+
+Input
+
+Latitude
+
+Longitude
+
+District
+
+Station
+
+Output
+
+District ID
+
+Station ID
+
+Grid Cell
+
+Crime Density
+
+Nearby Crime Count
+
+===============================================================
+extract_crime_features()
+===============================================================
+
+Input
+
+Crime Type
+
+Status
+
+Output
+
+Crime Category
+
+Severity
+
+Solved
+
+Pending
+
+Charge Sheet Filed
+
+===============================================================
+extract_history_features()
+===============================================================
+
+Generated Features
+
+Previous FIR Count
+
+Repeat Offender Count
+
+Previous Arrest Count
+
+Crime Frequency
+
+Average Response Time
+
+Average Monthly Crime
+
+===============================================================
+Encoding
+===============================================================
+
+Categorical Columns
+
+↓
+
+LabelEncoder
+
+District
+
+Crime Type
+
+Police Station
+
+Gender
+
+Status
+
+===============================================================
+Normalization
+===============================================================
+
+Numeric Columns
+
+↓
+
+StandardScaler
+
+Latitude
+
+Longitude
+
+Crime Count
+
+Frequency
+
+===============================================================
+Output
+===============================================================
+
+Processed Feature Matrix
+
++
+
+Target Labels
+
++
+
+Saved Encoders
+
+===============================================================
+5. hotspot_model.py
+===============================================================
+
+Purpose
+
+Predict crime hotspots.
+
+Algorithm
+
+XGBoost Classifier
+
+===============================================================
+Main Class
+===============================================================
+
+HotspotPredictor
+
+===============================================================
+Functions
+===============================================================
+
+prepare_target()
+
+train()
+
+evaluate()
+
+predict()
+
+save_model()
+
+load_model()
+
+===============================================================
+prepare_target()
+===============================================================
+
+Target Variable
+
+Hotspot
+
+TRUE
+
+If
+
+Crime Count
+
+>= Threshold
+
+FALSE
+
+Otherwise
+
+===============================================================
+Training Parameters
+===============================================================
+
+Algorithm
+
+XGBoost
+
+Learning Rate
+
+0.1
+
+Maximum Depth
+
+6
+
+Estimators
+
+100
+
+Random State
+
+42
+
+===============================================================
+Training Workflow
+===============================================================
+
+Training Dataset
+
+↓
+
+Train/Test Split
+
+↓
+
+Model Fit
+
+↓
+
+Prediction
+
+↓
+
+Metrics
+
+↓
+
+Save Model
+
+===============================================================
+Evaluation Metrics
+===============================================================
+
+Accuracy
+
+Precision
+
+Recall
+
+F1 Score
+
+ROC AUC
+
+Confusion Matrix
+
+===============================================================
+Example Output
+===============================================================
+
+Accuracy
+
+91.2%
+
+Precision
+
+89.7%
+
+Recall
+
+90.8%
+
+F1 Score
+
+90.2%
+
+===============================================================
+Prediction Output
+===============================================================
+
+{
+
+"prediction":"High Risk",
+
+"probability":0.91,
+
+"district":"Bengaluru",
+
+"model_version":"1.0"
+
+}
+
+===============================================================
+6. repeat_offender.py
+===============================================================
+
+Purpose
+
+Estimate probability that an accused becomes a repeat offender.
+
+Algorithm
+
+Random Forest Classifier
+
+===============================================================
+Main Class
+===============================================================
+
+RepeatOffenderPredictor
+
+===============================================================
+Functions
+===============================================================
+
+prepare_target()
+
+train()
+
+evaluate()
+
+predict()
+
+save_model()
+
+===============================================================
+Target Definition
+===============================================================
+
+Repeat Offender
+
+TRUE
+
+If
+
+Previous FIRs >= 2
+
+FALSE
+
+Otherwise
+
+===============================================================
+Features
+===============================================================
+
+Previous FIR Count
+
+Crime Type
+
+Previous Arrests
+
+Time Between Crimes
+
+District
+
+Age
+
+Gender
+
+===============================================================
+Training Parameters
+===============================================================
+
+Random Forest
+
+Trees
+
+100
+
+Maximum Depth
+
+8
+
+Random State
+
+42
+
+===============================================================
+Prediction Output
+===============================================================
+
+{
+
+"prediction":"Medium Risk",
+
+"probability":0.72,
+
+"previous_cases":3
+
+}
+
+===============================================================
+7. train.py
+===============================================================
+
+Purpose
+
+Single training pipeline for all ML models.
+
+===============================================================
+Workflow
+===============================================================
+
+Load Dataset
+
+↓
+
+Feature Engineering
+
+↓
+
+Split Dataset
+
+↓
+
+Train Hotspot Model
+
+↓
+
+Evaluate
+
+↓
+
+Save
+
+↓
+
+Train Repeat Offender
+
+↓
+
+Evaluate
+
+↓
+
+Save
+
+↓
+
+Generate Metadata
+
+===============================================================
+Functions
+===============================================================
+
+run_pipeline()
+
+train_hotspot()
+
+train_repeat_offender()
+
+validate_models()
+
+generate_metadata()
+
+===============================================================
+Metadata.json
+===============================================================
+
+Contains
+
+Training Date
+
+Dataset Version
+
+Accuracy
+
+Feature Count
+
+Model Version
+
+Algorithm
+
+===============================================================
+Example
+===============================================================
+
+{
+
+"model":"Hotspot",
+
+"algorithm":"XGBoost",
+
+"accuracy":0.91,
+
+"trained_on":"2026-07-17",
+
+"version":"v1"
+
+}
+
+===============================================================
+8. MODEL LIFECYCLE
+===============================================================
+
+Step 1
+
+Load Data
+
+↓
+
+Step 2
+
+Validate Dataset
+
+↓
+
+Step 3
+
+Clean Dataset
+
+↓
+
+Step 4
+
+Feature Engineering
+
+↓
+
+Step 5
+
+Split Data
+
+↓
+
+Step 6
+
+Train
+
+↓
+
+Step 7
+
+Evaluate
+
+↓
+
+Step 8
+
+Save Model
+
+↓
+
+Step 9
+
+Deploy
+
+↓
+
+Step 10
+
+Predict
+
+===============================================================
+Model Storage
+===============================================================
+
+models/
+
+hotspot.pkl
+
+offender.pkl
+
+encoders.pkl
+
+metadata.json
+
+===============================================================
+Retraining Strategy
+===============================================================
+
+Daily
+
+Weekly
+
+Monthly
+
+Manual
+
+Catalyst Functions can schedule retraining jobs.
+
+===============================================================
+9. PREDICTION APIS
+===============================================================
+
+POST
+
+/predict/hotspot
+
+===============================================================
+Input
+===============================================================
+
+{
+
+"district":"Bengaluru",
+
+"crime_type":"Cyber Fraud",
+
+"month":8,
+
+"crime_frequency":52
+
+}
+
+===============================================================
+Output
+===============================================================
+
+{
+
+"prediction":"High Risk",
+
+"probability":0.91
+
+}
+
+===============================================================
+POST
+
+/predict/offender
+
+===============================================================
+Input
+===============================================================
+
+{
+
+"accused_id":"A1001"
+
+}
+
+===============================================================
+Output
+===============================================================
+
+{
+
+"prediction":"Moderate Risk",
+
+"probability":0.73
+
+}
+
+===============================================================
+10. TESTING
+===============================================================
+
+Feature Engineering
+
+✓ Missing Values
+
+✓ Duplicate Removal
+
+✓ Encoding
+
+✓ Scaling
+
+--------------------------------
+
+Hotspot Model
+
+✓ Training
+
+✓ Prediction
+
+✓ Save
+
+✓ Load
+
+--------------------------------
+
+Repeat Offender
+
+✓ Target Creation
+
+✓ Accuracy
+
+✓ Prediction
+
+✓ Model Loading
+
+--------------------------------
+
+Integration
+
+Catalyst
+
+↓
+
+Training
+
+↓
+
+Prediction
+
+↓
+
+JSON
+
+===============================================================
+11. SECURITY
+===============================================================
+
+Only approved models used.
+
+Model checksum verified.
+
+No user can upload models.
+
+Prediction timeout.
+
+Input validation.
+
+Output validation.
+
+No internal model details exposed.
+
+Audit every prediction request.
+
+===============================================================
+12. PHASE COMPLETION CRITERIA
+===============================================================
+
+✓ Historical data loaded.
+
+✓ Features engineered.
+
+✓ Models trained.
+
+✓ Accuracy documented.
+
+✓ Models saved.
+
+✓ Prediction APIs working.
+
+✓ Metadata generated.
+
+✓ Catalyst integration complete.
+
+✓ Logging complete.
+
+✓ Security validated.
+
+===============================================================
+END OF PART 3
+===============================================================
+
+
+===============================================================
+CATALYST CRIME ANALYTICS AI MODULE
+PRODUCTION DEVELOPMENT ROADMAP
+PART 4
+Phase 3 - Explainable AI (XAI), Integration & API Layer
+===============================================================
+
+Version            : 1.0 MVP
+Objective          : Make every AI prediction transparent,
+                     understandable and trustworthy.
+
+===============================================================
+TABLE OF CONTENTS
+===============================================================
+
+1. Explainable AI Overview
+
+2. Explainability Architecture
+
+3. Folder Structure
+
+4. feature_importance.py
+
+5. reasoning.py
+
+6. Unified API Layer
+
+7. Response Format
+
+8. Error Handling
+
+9. Performance Optimization
+
+10. Security
+
+11. Testing
+
+12. Phase Completion
+
+===============================================================
+1. EXPLAINABLE AI OVERVIEW
+===============================================================
+
+Artificial Intelligence should never return predictions without
+explaining WHY the prediction was generated.
+
+Example
+
+Prediction
+
+High Risk Hotspot
+
+Confidence
+
+91%
+
+Without Explainability
+
+Officer does not know why.
+
+With Explainability
+
+Officer understands
+
+• Crime increased recently
+
+• Similar incidents happened nearby
+
+• Historical trend supports prediction
+
+• Festival season increases crime
+
+The explanation builds trust and allows investigators to verify AI
+recommendations.
+
+===============================================================
+2. EXPLAINABILITY ARCHITECTURE
+===============================================================
+
+Prediction Engine
+
+↓
+
+Prediction Output
+
+↓
+
+SHAP Engine
+
+↓
+
+Feature Importance
+
+↓
+
+Reasoning Generator
+
+↓
+
+Natural Language Explanation
+
+↓
+
+JSON Response
+
+===============================================================
+Pipeline
+===============================================================
+
+Model Prediction
+
+↓
+
+Collect Feature Values
+
+↓
+
+Calculate SHAP Values
+
+↓
+
+Rank Features
+
+↓
+
+Generate Explanation
+
+↓
+
+Attach Confidence
+
+↓
+
+Return Response
+
+===============================================================
+3. FOLDER STRUCTURE
+===============================================================
+
+explainability/
+
+│
+
+├── feature_importance.py
+
+└── reasoning.py
+
+===============================================================
+4. feature_importance.py
+===============================================================
+
+Purpose
+
+Determine which input features influenced a prediction the most.
+
+===============================================================
+Main Class
+===============================================================
+
+FeatureImportanceEngine
+
+===============================================================
+Responsibilities
+===============================================================
+
+Load trained model
+
+Generate SHAP values
+
+Rank features
+
+Generate importance scores
+
+Prepare explanation input
+
+===============================================================
+Functions
+===============================================================
+
+load_model()
+
+calculate_shap()
+
+rank_features()
+
+generate_scores()
+
+validate_features()
+
+===============================================================
+load_model()
+===============================================================
+
+Input
+
+Model Path
+
+Output
+
+Loaded XGBoost
+
+or
+
+Random Forest Model
+
+===============================================================
+calculate_shap()
+===============================================================
+
+Input
+
+Prediction Features
+
+↓
+
+TreeExplainer
+
+↓
+
+SHAP Values
+
+===============================================================
+Example
+===============================================================
+
+District
+
+0.42
+
+Crime Frequency
+
+0.31
+
+Holiday
+
+0.15
+
+Month
+
+0.08
+
+Station
+
+0.04
+
+===============================================================
+rank_features()
+===============================================================
+
+Sort features by
+
+Absolute SHAP Value
+
+Descending Order
+
+===============================================================
+Output
+===============================================================
+
+Top 5 Important Features
+
+===============================================================
+Example
+===============================================================
+
+Crime Frequency
+
+22%
+
+District
+
+19%
+
+Holiday
+
+16%
+
+Month
+
+12%
+
+Police Station
+
+8%
+
+===============================================================
+Fallback Strategy
+===============================================================
+
+If SHAP fails
+
+↓
+
+Use
+
+Model Feature Importance
+
+↓
+
+Continue
+
+===============================================================
+Output Format
+===============================================================
+
+{
+
+"feature_importance":[
+
+{
+
+"name":"Crime Frequency",
+
+"score":0.22
+
+},
+
+{
+
+"name":"District",
+
+"score":0.19
+
+}
+
+]
+
+}
+
+===============================================================
+5. reasoning.py
+===============================================================
+
+Purpose
+
+Convert feature importance into human-readable explanations.
+
+===============================================================
+Main Class
+===============================================================
+
+ReasoningEngine
+
+===============================================================
+Functions
+===============================================================
+
+generate_reason()
+
+confidence_level()
+
+risk_summary()
+
+build_response()
+
+===============================================================
+generate_reason()
+===============================================================
+
+Input
+
+Prediction
+
++
+
+Top Features
+
+↓
+
+Natural Language
+
+===============================================================
+Example
+===============================================================
+
+Prediction
+
+High Risk
+
+Features
+
+Crime Frequency
+
+District
+
+Holiday
+
+Generated Explanation
+
+"The prediction indicates a high likelihood of crime because this
+district has experienced increasing crime frequency during similar
+months and historical records show comparable crime patterns."
+
+===============================================================
+confidence_level()
+===============================================================
+
+Probability
+
+>=90%
+
+↓
+
+Very High
+
+--------------------------------
+
+80-90%
+
+↓
+
+High
+
+--------------------------------
+
+60-80%
+
+↓
+
+Medium
+
+--------------------------------
+
+Below 60%
+
+↓
+
+Low
+
+===============================================================
+risk_summary()
+===============================================================
+
+Creates short summary
+
+Example
+
+High Risk Area
+
+Moderate Risk
+
+Low Risk
+
+Very High Risk
+
+===============================================================
+Output
+===============================================================
+
+{
+
+"summary":"High crime risk expected.",
+
+"confidence":"High",
+
+"reason":"Historical crime frequency is increasing."
+
+}
+
+===============================================================
+6. UNIFIED API LAYER
+===============================================================
+
+After Phase 3 all modules become one pipeline.
+
+===============================================================
+Complete Request Flow
+===============================================================
+
+User
+
+↓
+
+FastAPI
+
+↓
+
+Validation
+
+↓
+
+Translation
+
+↓
+
+Intent Detection
+
+↓
+
+Entity Extraction
+
+↓
+
+SQL Generation
+
+↓
+
+Catalyst Query
+
+↓
+
+Prediction Engine
+
+↓
+
+Explainability
+
+↓
+
+Response Builder
+
+↓
+
+JSON Response
+
+===============================================================
+Primary Endpoint
+===============================================================
+
+POST
+
+/chat
+
+===============================================================
+Request
+===============================================================
+
+{
+
+"query":"Predict burglary hotspot in Mysore next week",
+
+"user_id":"INV001"
+
+}
+
+===============================================================
+Pipeline
+===============================================================
+
+Validate Request
+
+↓
+
+Translate
+
+↓
+
+Detect Intent
+
+↓
+
+Extract Entities
+
+↓
+
+Generate SQL
+
+↓
+
+Query Catalyst
+
+↓
+
+Engineer Features
+
+↓
+
+Predict
+
+↓
+
+Explain
+
+↓
+
+Return JSON
+
+===============================================================
+Additional APIs
+===============================================================
+
+POST
+
+/predict/hotspot
+
+--------------------------------
+
+POST
+
+/predict/offender
+
+--------------------------------
+
+POST
+
+/explain
+
+--------------------------------
+
+GET
+
+/health
+
+===============================================================
+Health API
+===============================================================
+
+Checks
+
+Catalyst
+
+Models
+
+Translation
+
+Database
+
+Memory
+
+===============================================================
+Health Response
+===============================================================
+
+{
+
+"status":"healthy",
+
+"database":"connected",
+
+"models":"loaded",
+
+"translation":"online"
+
+}
+
+===============================================================
+7. STANDARD RESPONSE FORMAT
+===============================================================
+
+Every API returns identical structure.
+
+{
+
+"status":"success",
+
+"request_id":"UUID",
+
+"prediction":{
+
+"risk":"High",
+
+"probability":0.91
+
+},
+
+"explanation":{
+
+"confidence":"High",
+
+"summary":"Crime frequency increasing."
+
+},
+
+"results":[ ],
+
+"execution_time":180
+
+}
+
+===============================================================
+Error Response
+===============================================================
+
+{
+
+"status":"error",
+
+"code":"INVALID_DISTRICT",
+
+"message":"District not found."
+
+}
+
+===============================================================
+8. ERROR HANDLING
+===============================================================
+
+Translation Error
+
+↓
+
+Use Original Query
+
+--------------------------------
+
+Intent Error
+
+↓
+
+Fallback Intent
+
+--------------------------------
+
+Entity Error
+
+↓
+
+Return Validation Error
+
+--------------------------------
+
+Prediction Error
+
+↓
+
+Return Results Without Prediction
+
+--------------------------------
+
+Explanation Error
+
+↓
+
+Return Prediction Only
+
+===============================================================
+Graceful Degradation
+===============================================================
+
+If
+
+Prediction fails
+
+↓
+
+Database Results still returned.
+
+If
+
+Explanation fails
+
+↓
+
+Prediction returned.
+
+Application never crashes.
+
+===============================================================
+9. PERFORMANCE OPTIMIZATION
+===============================================================
+
+Load models once
+
+Reuse Catalyst connection
+
+Cache metadata
+
+Cache district list
+
+Cache crime types
+
+Use async FastAPI
+
+Batch database requests
+
+===============================================================
+Target Response Time
+===============================================================
+
+Translation
+
+<300 ms
+
+Intent
+
+<100 ms
+
+Prediction
+
+<250 ms
+
+Explanation
+
+<150 ms
+
+Total
+
+<800 ms
+
+===============================================================
+10. SECURITY
+===============================================================
+
+Never expose
+
+Model weights
+
+Training dataset
+
+SHAP internals
+
+Stack traces
+
+Database schema
+
+===============================================================
+Allowed Users
+===============================================================
+
+Officer
+
+Search
+
+--------------------------------
+
+Investigator
+
+Search
+
+Prediction
+
+--------------------------------
+
+Admin
+
+Everything
+
+===============================================================
+Logging
+===============================================================
+
+Every prediction
+
+Every explanation
+
+Every error
+
+Every API call
+
+Stored in AuditLog
+
+===============================================================
+11. TESTING
+===============================================================
+
+Explainability
+
+✓ SHAP Generated
+
+✓ Feature Ranking
+
+✓ Summary Created
+
+✓ Confidence Level
+
+--------------------------------
+
+API
+
+✓ /chat
+
+✓ /predict
+
+✓ /health
+
+✓ /explain
+
+--------------------------------
+
+Integration
+
+User
+
+↓
+
+NLP
+
+↓
+
+Database
+
+↓
+
+Prediction
+
+↓
+
+Explanation
+
+↓
+
+Response
+
+===============================================================
+12. PHASE COMPLETION CRITERIA
+===============================================================
+
+✓ SHAP integrated.
+
+✓ Explanation generated.
+
+✓ Confidence calculated.
+
+✓ Unified APIs working.
+
+✓ Error handling complete.
+
+✓ Health endpoint available.
+
+✓ JSON response standardized.
+
+✓ Performance targets met.
+
+✓ Security validated.
+
+===============================================================
+END OF PART 4
+===============================================================
+
+
+===============================================================
+CATALYST CRIME ANALYTICS AI MODULE
+PRODUCTION DEVELOPMENT ROADMAP
+PART 5
+Phase 4 - Security, Deployment, Monitoring, Testing &
+Production Readiness
+===============================================================
+
+Version            : 1.0 MVP
+Objective          : Deploy the AI module as a secure,
+                     scalable production service on Zoho Catalyst.
+
+===============================================================
+TABLE OF CONTENTS
+===============================================================
+
+1. Production Architecture
+
+2. Deployment Workflow
+
+3. Authentication & Authorization
+
+4. Security Architecture
+
+5. Logging & Monitoring
+
+6. Audit Trail
+
+7. Error Handling
+
+8. Testing Strategy
+
+9. CI/CD Pipeline
+
+10. Performance Optimization
+
+11. Disaster Recovery
+
+12. Production Checklist
+
+13. MVP Acceptance Criteria
+
+===============================================================
+1. PRODUCTION ARCHITECTURE
+===============================================================
+
+Production Components
+
+                    Client
+
+                      │
+
+                      ▼
+
+              Catalyst AppSail
+
+                      │
+
+          FastAPI Backend Server
+
+                      │
+
+     ┌────────────────┼────────────────┐
+
+     ▼                ▼                ▼
+
+ NLP Engine      ML Prediction      XAI Engine
+
+     │                │                │
+
+     └────────────────┼────────────────┘
+
+                      ▼
+
+          Catalyst DataStore
+
+                      │
+
+                      ▼
+
+          Catalyst Functions
+
+===============================================================
+Production Components
+===============================================================
+
+FastAPI
+
+Purpose
+
+Serve REST APIs
+
+------------------------------------------------
+
+Catalyst DataStore
+
+Purpose
+
+Store
+
+• FIR
+
+• Crime Records
+
+• Prediction History
+
+• Audit Logs
+
+------------------------------------------------
+
+Catalyst Functions
+
+Purpose
+
+Background Tasks
+
+Examples
+
+Nightly Retraining
+
+Scheduled Reports
+
+Batch Predictions
+
+Cleanup Jobs
+
+------------------------------------------------
+
+Models Directory
+
+Purpose
+
+Store trained ML models
+
+hotspot.pkl
+
+offender.pkl
+
+encoders.pkl
+
+metadata.json
+
+===============================================================
+2. DEPLOYMENT WORKFLOW
+===============================================================
+
+Developer
+
+↓
+
+Git Repository
+
+↓
+
+Testing
+
+↓
+
+Package Application
+
+↓
+
+Deploy to AppSail
+
+↓
+
+Health Check
+
+↓
+
+Production Ready
+
+===============================================================
+Deployment Steps
+===============================================================
+
+Step 1
+
+Install Dependencies
+
+pip install -r requirements.txt
+
+------------------------------------------------
+
+Step 2
+
+Configure Environment Variables
+
+------------------------------------------------
+
+Step 3
+
+Connect Catalyst Project
+
+------------------------------------------------
+
+Step 4
+
+Deploy FastAPI
+
+------------------------------------------------
+
+Step 5
+
+Upload ML Models
+
+------------------------------------------------
+
+Step 6
+
+Verify APIs
+
+------------------------------------------------
+
+Step 7
+
+Enable Scheduled Functions
+
+------------------------------------------------
+
+Step 8
+
+Go Live
+
+===============================================================
+3. AUTHENTICATION & AUTHORIZATION
+===============================================================
+
+Authentication
+
+JWT Token
+
+OR
+
+Zoho Authentication
+
+===============================================================
+Workflow
+===============================================================
+
+Client Login
+
+↓
+
+Receive Token
+
+↓
+
+Include Token
+
+Authorization: Bearer XXXXX
+
+↓
+
+FastAPI Validates
+
+↓
+
+Allow Request
+
+===============================================================
+Roles
+===============================================================
+
+Officer
+
+Permissions
+
+• Search Crime
+
+• View Statistics
+
+------------------------------------------------
+
+Investigator
+
+Permissions
+
+• Search
+
+• Predictions
+
+• Explainability
+
+------------------------------------------------
+
+Administrator
+
+Permissions
+
+• Everything
+
+• Retraining
+
+• Audit Logs
+
+• Configuration
+
+===============================================================
+Role Validation
+===============================================================
+
+Every API
+
+↓
+
+Check Token
+
+↓
+
+Verify Role
+
+↓
+
+Allow
+
+OR
+
+Reject
+
+===============================================================
+4. SECURITY ARCHITECTURE
+===============================================================
+
+Layer 1
+
+Request Validation
+
+------------------------------------------------
+
+Layer 2
+
+Authentication
+
+------------------------------------------------
+
+Layer 3
+
+Authorization
+
+------------------------------------------------
+
+Layer 4
+
+SQL Validation
+
+------------------------------------------------
+
+Layer 5
+
+Catalyst Query
+
+------------------------------------------------
+
+Layer 6
+
+Prediction
+
+------------------------------------------------
+
+Layer 7
+
+Logging
+
+===============================================================
+Input Validation
+===============================================================
+
+Maximum Length
+
+1000 Characters
+
+------------------------------------------------
+
+Allowed Characters
+
+Letters
+
+Numbers
+
+Spaces
+
+Basic Symbols
+
+------------------------------------------------
+
+Reject
+
+Binary Data
+
+Malformed JSON
+
+Large Payloads
+
+Unknown Fields
+
+===============================================================
+SQL Injection Prevention
+===============================================================
+
+Allowed
+
+SELECT
+
+WHERE
+
+ORDER BY
+
+LIMIT
+
+------------------------------------------------
+
+Blocked
+
+DROP
+
+DELETE
+
+UPDATE
+
+INSERT
+
+ALTER
+
+TRUNCATE
+
+EXEC
+
+UNION
+
+===============================================================
+Sensitive Data Protection
+===============================================================
+
+Never Return
+
+Victim Address
+
+Phone Number
+
+Email
+
+Government ID
+
+Internal Notes
+
+===============================================================
+API Rate Limiting
+===============================================================
+
+Officer
+
+60 Requests/Minute
+
+------------------------------------------------
+
+Investigator
+
+120 Requests/Minute
+
+------------------------------------------------
+
+Administrator
+
+300 Requests/Minute
+
+===============================================================
+5. LOGGING & MONITORING
+===============================================================
+
+Every Request Logs
+
+Request ID
+
+Timestamp
+
+User ID
+
+Role
+
+Endpoint
+
+Execution Time
+
+Status
+
+Prediction Used
+
+Errors
+
+===============================================================
+AuditLog Table
+===============================================================
+
+Columns
+
+Log_ID
+
+Timestamp
+
+User_ID
+
+Role
+
+Endpoint
+
+Intent
+
+Status
+
+Duration
+
+IPAddress
+
+Remarks
+
+===============================================================
+Monitoring Metrics
+===============================================================
+
+API Response Time
+
+Requests Per Minute
+
+Prediction Count
+
+Translation Requests
+
+Database Latency
+
+Memory Usage
+
+CPU Usage
+
+Model Loading Time
+
+===============================================================
+Health Checks
+===============================================================
+
+Database
+
+Models
+
+Translation
+
+Prediction
+
+Disk Space
+
+Memory
+
+===============================================================
+6. ERROR HANDLING
+===============================================================
+
+Validation Error
+
+↓
+
+400
+
+------------------------------------------------
+
+Authentication Error
+
+↓
+
+401
+
+------------------------------------------------
+
+Authorization Error
+
+↓
+
+403
+
+------------------------------------------------
+
+Resource Not Found
+
+↓
+
+404
+
+------------------------------------------------
+
+Prediction Error
+
+↓
+
+200
+
+Prediction skipped
+
+Results returned
+
+------------------------------------------------
+
+Unexpected Error
+
+↓
+
+500
+
+Generic Message
+
+===============================================================
+Example Error Response
+===============================================================
+
+{
+
+"status":"error",
+
+"code":"INVALID_INPUT",
+
+"message":"Please verify your request."
+
+}
+
+===============================================================
+7. TESTING STRATEGY
+===============================================================
+
+Unit Testing
+===============================================================
+
+translator.py
+
+✓ Kannada Detection
+
+✓ English Detection
+
+✓ Translation
+
+------------------------------------------------
+
+intent.py
+
+✓ Intent Classification
+
+✓ Unknown Intent
+
+------------------------------------------------
+
+entity_parser.py
+
+✓ Crime Extraction
+
+✓ Date Parsing
+
+✓ District Parsing
+
+------------------------------------------------
+
+sql_generator.py
+
+✓ SQL Generation
+
+✓ SQL Validation
+
+------------------------------------------------
+
+feature_engineering.py
+
+✓ Cleaning
+
+✓ Encoding
+
+✓ Scaling
+
+------------------------------------------------
+
+hotspot_model.py
+
+✓ Prediction
+
+✓ Save
+
+✓ Load
+
+------------------------------------------------
+
+repeat_offender.py
+
+✓ Prediction
+
+✓ Accuracy
+
+------------------------------------------------
+
+reasoning.py
+
+✓ Explanation
+
+✓ Confidence
+
+===============================================================
+Integration Testing
+===============================================================
+
+User
+
+↓
+
+NLP
+
+↓
+
+Catalyst
+
+↓
+
+Prediction
+
+↓
+
+Explanation
+
+↓
+
+JSON
+
+===============================================================
+Load Testing
+===============================================================
+
+100 Users
+
+↓
+
+500 Users
+
+↓
+
+1000 Users
+
+↓
+
+Stress Test
+
+===============================================================
+Security Testing
+===============================================================
+
+SQL Injection
+
+Cross Site Scripting
+
+JWT Validation
+
+Rate Limiting
+
+Role Validation
+
+Input Validation
+
+===============================================================
+8. CI/CD PIPELINE
+===============================================================
+
+Developer
+
+↓
+
+Git Push
+
+↓
+
+Build
+
+↓
+
+Run Tests
+
+↓
+
+Package
+
+↓
+
+Deploy
+
+↓
+
+Health Check
+
+↓
+
+Production
+
+===============================================================
+Deployment Validation
+===============================================================
+
+✓ APIs Running
+
+✓ Models Loaded
+
+✓ Database Connected
+
+✓ Catalyst Connected
+
+✓ Logs Working
+
+===============================================================
+9. PERFORMANCE OPTIMIZATION
+===============================================================
+
+Load Models Once
+
+------------------------------------------------
+
+Connection Pooling
+
+------------------------------------------------
+
+Reuse Database Sessions
+
+------------------------------------------------
+
+Cache District List
+
+------------------------------------------------
+
+Cache Crime Types
+
+------------------------------------------------
+
+Async API Calls
+
+------------------------------------------------
+
+Batch Database Reads
+
+------------------------------------------------
+
+Compressed JSON Responses
+
+===============================================================
+Performance Targets
+===============================================================
+
+Health API
+
+<50 ms
+
+------------------------------------------------
+
+Translation
+
+<300 ms
+
+------------------------------------------------
+
+Intent Detection
+
+<100 ms
+
+------------------------------------------------
+
+Prediction
+
+<250 ms
+
+------------------------------------------------
+
+Database Query
+
+<200 ms
+
+------------------------------------------------
+
+Overall Response
+
+<800 ms
+
+===============================================================
+10. DISASTER RECOVERY
+===============================================================
+
+If Database Fails
+
+↓
+
+Retry
+
+↓
+
+Return Friendly Error
+
+------------------------------------------------
+
+If Prediction Model Missing
+
+↓
+
+Return Search Results Only
+
+------------------------------------------------
+
+If Translation Offline
+
+↓
+
+Use Original Query
+
+------------------------------------------------
+
+If SHAP Fails
+
+↓
+
+Return Prediction
+
+Without Explanation
+
+===============================================================
+11. PRODUCTION CHECKLIST
+===============================================================
+
+✓ Environment Variables
+
+✓ Catalyst Connected
+
+✓ Data Imported
+
+✓ Models Uploaded
+
+✓ Encoders Uploaded
+
+✓ APIs Tested
+
+✓ Health Endpoint Working
+
+✓ Logging Enabled
+
+✓ Rate Limiting Enabled
+
+✓ Security Validated
+
+✓ Documentation Completed
+
+===============================================================
+12. MVP ACCEPTANCE CRITERIA
+===============================================================
+
+The project is considered complete when:
+
+✓ Officers can search crimes using natural language.
+
+✓ English and Kannada are supported.
+
+✓ Catalyst DataStore executes secure parameterized queries.
+
+✓ Hotspot prediction API works.
+
+✓ Repeat offender prediction API works.
+
+✓ Explainability API generates meaningful explanations.
+
+✓ Unified /chat endpoint works.
+
+✓ All APIs return standardized JSON.
+
+✓ Authentication and role validation are enforced.
+
+✓ SQL injection protection is verified.
+
+✓ Audit logging is operational.
+
+✓ Production deployment succeeds on Catalyst AppSail.
+
+✓ Performance targets are achieved.
+
+✓ No critical security vulnerabilities remain.
+
+===============================================================
+FINAL PROJECT DELIVERABLES
+===============================================================
+
+Source Code
+
+FastAPI Backend
+
+NLP Engine
+
+Prediction Engine
+
+Explainability Engine
+
+Catalyst Integration
+
+REST APIs
+
+Documentation
+
+Deployment Guide
+
+API Documentation
+
+Model Files
+
+Training Pipeline
+
+Testing Reports
+
+Security Checklist
+
+Production Configuration
+
+===============================================================
+END OF PART 5
+===============================================================
+

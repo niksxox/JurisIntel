@@ -1,0 +1,8 @@
+{
+    "model": "Hotspot",
+    "algorithm": "XGBoost",
+    "accuracy": 1.0,
+    "trained_on": "2026-07-19",
+    "version": "v1",
+    "feature_count": 7
+}

@@ -1,0 +1,132 @@
+# ===========================
+# Python
+# ===========================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Bytecode
+*.pyo
+*.pyd
+
+# ===========================
+# Virtual Environments
+# ===========================
+.venv/
+venv/
+env/
+ENV/
+.venv-*/
+venv-*/
+.env/
+
+# Your local venvs
+.venv-1/
+.venv-2/
+.venv-3/
+
+# ===========================
+# Environment Variables
+# ===========================
+.env
+.env.*
+!.env.example
+
+# ===========================
+# IDE
+# ===========================
+.vscode/
+.idea/
+*.iml
+
+# ===========================
+# Testing
+# ===========================
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+.tox/
+.nox/
+
+# ===========================
+# Type Checking
+# ===========================
+.mypy_cache/
+.pyre/
+.pytype/
+
+# ===========================
+# Linting
+# ===========================
+.ruff_cache/
+
+# ===========================
+# Logs
+# ===========================
+logs/
+*.log
+
+# ===========================
+# Build
+# ===========================
+build/
+dist/
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+
+# ===========================
+# Jupyter
+# ===========================
+.ipynb_checkpoints/
+
+# ===========================
+# OS Files
+# ===========================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ===========================
+# Temporary Files
+# ===========================
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+
+# ===========================
+# Model Artifacts
+# (Ignore if models can be regenerated)
+# ===========================
+models/*.pkl
+models/*.joblib
+models/*.onnx
+models/*.h5
+models/*.pt
+models/*.pth
+
+# Keep metadata files
+!models/*.json
+
+# ===========================
+# Dataset (optional)
+# Uncomment if datasets are too large
+# ===========================
+# data/
+# *.csv
+# *.parquet
+# *.xlsx
+
+# ===========================
+# Runtime Cache
+# ===========================
+.cache/
+
+# ===========================
+# Local Configuration
+# ===========================
+*.local
