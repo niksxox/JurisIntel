@@ -50,6 +50,8 @@ class Unit(Base):
     StateID = Column(Integer, ForeignKey("state.StateID"))
     DistrictID = Column(Integer, ForeignKey("district.DistrictID"))
     Active = Column(Boolean, default=True)
+    ContactPhone = Column(String)
+    ContactEmail = Column(String)
     unit_type = relationship("UnitType")
     state = relationship("State")
     district = relationship("District")
@@ -289,6 +291,88 @@ class ArrestSurrender(Base):
     io = relationship("Employee")
 
 
+class User(Base):
+    """
+    Login accounts. Accounts can ONLY be created by an Admin (enforced in the
+    API layer, not here) -- there is no public sign-up. `purpose` is the
+    reason the user gave for needing access, captured at account-creation
+    time for audit purposes (e.g. "Investigation", "Court Liaison").
+    """
+    __tablename__ = "user_account"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    username = Column(String, unique=True, nullable=False)
+    password_hash = Column(String, nullable=False)
+    salt = Column(String, nullable=False)
+    full_name = Column(String)
+    role = Column(String, nullable=False)       # Admin | Investigating Officer | Analyst | Public Liaison
+    purpose = Column(String)                     # why this account was created
+    station_id = Column(Integer, ForeignKey("unit.UnitID"), nullable=True)
+    active = Column(Boolean, default=True)
+    created_at = Column(DateTime)
+    created_by = Column(String)
+    station = relationship("Unit")
+
+
+class SessionToken(Base):
+    __tablename__ = "session_token"
+    token = Column(String, primary_key=True)
+    user_id = Column(Integer, ForeignKey("user_account.id"))
+    created_at = Column(DateTime)
+    expires_at = Column(DateTime)
+    user = relationship("User")
+
+
+class WantedPerson(Base):
+    """
+    Cross-station wanted list. Any station can post; every station sees every
+    posting -- that's the "shared" part. `station_id` records who posted it.
+    """
+    __tablename__ = "wanted_person"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, nullable=False)
+    aliases = Column(String)
+    case_id = Column(Integer, ForeignKey("case_master.CaseMasterID"), nullable=True)
+    reason = Column(Text)
+    danger_level = Column(String)  # Low | Medium | High | Extreme
+    last_seen_location = Column(String)
+    status = Column(String, default="Active")  # Active | Apprehended | Withdrawn
+    posted_by_station_id = Column(Integer, ForeignKey("unit.UnitID"))
+    posted_by_user = Column(String)
+    created_at = Column(DateTime)
+    station = relationship("Unit")
+    case = relationship("CaseMaster")
+
+
+class StationBulletin(Base):
+    """Shared noticeboard: any station can post a message every other station sees."""
+    __tablename__ = "station_bulletin"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    station_id = Column(Integer, ForeignKey("unit.UnitID"))
+    author = Column(String)
+    subject = Column(String)
+    message = Column(Text)
+    created_at = Column(DateTime)
+    station = relationship("Unit")
+
+
+class CrimeReviewStat(Base):
+    """
+    Real Karnataka SCRB monthly crime-review statistics (2021-2024), loaded
+    verbatim from CRIME_REVIEW_2021_TO_2024_KARNATAKA.csv. State-level only
+    (no district breakdown in the source data) -- used to ground the Trends
+    tab in real published figures instead of only synthetic FIR data, until
+    live district-level data is connected.
+    """
+    __tablename__ = "crime_review_stat"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    act_category = Column(String)      # normalized: IPC Crime / Special & Local Laws / etc.
+    major_head = Column(String)
+    minor_head = Column(String)
+    month = Column(String)
+    year = Column(Integer)
+    count_current_month = Column(Integer)
+
+
 class AuditLog(Base):
     """
     Explainable-AI / access audit trail. Every chatbot turn, NL search, profile
@@ -302,6 +386,7 @@ class AuditLog(Base):
     timestamp = Column(DateTime)
     user_role = Column(String)
     user_name = Column(String)
+    purpose = Column(String)       # purpose of access declared at login
     action_type = Column(String)   # chat | nl_search | profile_view | pdf_export | scene_reconstruction
     query_text = Column(Text)
     matched_filters = Column(Text)     # JSON string

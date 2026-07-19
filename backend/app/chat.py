@@ -114,9 +114,9 @@ def handle_chat(db, message: str, history: list, language: str = "en"):
         risk_line = t(
             "risk_summary", language,
             score=profile["risk"]["score"], band=profile["risk"]["band"],
-            count=profile["risk"]["case_count"], formula=profile["risk"]["formula"],
+            count=profile["risk"]["case_count"],
         )
-        reply = f"{intro} {profile['case_count']} case(s) on file, {profile['arrest_count']} arrest record(s).\n{risk_line}"
+        reply = f"{intro} {risk_line}"
         return {
             "reply": reply,
             "referenced_case_ids": profile["case_ids"],

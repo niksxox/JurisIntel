@@ -14,8 +14,9 @@ from .models import (
     CaseCategory, GravityOffence, CrimeHead, CrimeSubHead, CaseStatusMaster,
     Court, Act, Section, ReligionMaster, CasteMaster, OccupationMaster,
     CaseMaster, ComplainantDetails, ActSectionAssociation, Victim, Accused,
-    ArrestSurrender,
+    ArrestSurrender, WantedPerson, StationBulletin,
 )
+from . import crime_stats, auth
 
 random.seed(42)
 
@@ -245,9 +246,58 @@ def seed():
             db.commit()
 
     db.commit()
+
+    # --- real Karnataka SCRB crime-review statistics (2021-2024) ---
+    n_stats = crime_stats.load_csv(db)
+
+    # --- accounts: default admin + a few demo accounts across roles/stations ---
+    auth.seed_default_admin(db)
+    demo_accounts = [
+        ("io_demo", "Investigate@26", "Insp. Priya Nair", "Investigating Officer", "Active Investigation", units[0].UnitID),
+        ("analyst_demo", "Analyze@26", "Deepa Rao", "Analyst", "Case Review / Analysis", units[2].UnitID),
+        ("liaison_demo", "Liaison@26", "Manoj Kumar", "Public Liaison", "Public Liaison / RTI Response", units[4].UnitID),
+    ]
+    for username, password, full_name, role, purpose, station_id in demo_accounts:
+        try:
+            auth.create_user(db, username=username, password=password, full_name=full_name,
+                              role=role, purpose=purpose, station_id=station_id, created_by="system_seed")
+        except ValueError:
+            pass  # already exists
+
+    # --- wanted list (a few active postings across different stations) ---
+    wanted_seed = [
+        (KNOWN_OFFENDERS[0] if KNOWN_OFFENDERS else "Unknown", "Suspected in an armed robbery ring operating across district lines.", "High", "Last seen near Tumakuru bus stand"),
+        (KNOWN_OFFENDERS[1] if len(KNOWN_OFFENDERS) > 1 else "Unknown", "Absconding after skipping bail in a narcotics trafficking case.", "Extreme", "Believed to be hiding in Ballari district"),
+        (KNOWN_OFFENDERS[2] if len(KNOWN_OFFENDERS) > 2 else "Unknown", "Wanted for questioning in a series of burglaries.", "Medium", "Last seen in Mysuru city"),
+    ]
+    for idx, (name, reason, danger, last_seen) in enumerate(wanted_seed):
+        db.add(WantedPerson(
+            name=name, aliases="", reason=reason, danger_level=danger, last_seen_location=last_seen,
+            status="Active", posted_by_station_id=units[idx % len(units)].UnitID,
+            posted_by_user="Insp. Priya Nair", created_at=datetime.utcnow() - timedelta(days=idx * 3),
+        ))
+
+    # --- shared station bulletin (a few sample cross-station notices) ---
+    bulletin_seed = [
+        ("Stolen vehicle alert", "White Maruti Swift, plate ending 4471, reported stolen near Davanagere. "
+                                  "Flag if spotted at checkpoints."),
+        ("Coordination request", "Investigating a cross-district burglary pattern — if any station has similar "
+                                  "MO reports from the last 30 days, please share case numbers."),
+        ("Court date reminder", "Reminder: joint appearance for the Hubballi conspiracy case is scheduled next week; "
+                                 "IOs from both stations should coordinate case files beforehand."),
+    ]
+    for idx, (subject, message) in enumerate(bulletin_seed):
+        db.add(StationBulletin(
+            station_id=units[(idx + 1) % len(units)].UnitID, author="Insp. Priya Nair",
+            subject=subject, message=message, created_at=datetime.utcnow() - timedelta(days=idx * 2),
+        ))
+
+    db.commit()
     db.close()
     print(f"Seeded {len(units)} units, {len(employees)} employees, 150 cases, "
-          f"{len(accused_master_rows)} accused records, {len(KNOWN_OFFENDERS)} known-offender identities.")
+          f"{len(accused_master_rows)} accused records, {len(KNOWN_OFFENDERS)} known-offender identities, "
+          f"{n_stats} real crime-review statistic rows, {len(demo_accounts) + 1} accounts, "
+          f"{len(wanted_seed)} wanted postings, {len(bulletin_seed)} bulletin notices.")
 
 
 if __name__ == "__main__":

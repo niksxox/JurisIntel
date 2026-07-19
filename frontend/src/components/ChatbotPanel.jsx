@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { api } from "../api";
+import DossierCard from "./DossierCard";
 
 const LANGUAGES = [
   { code: "en", label: "English", speech: "en-IN" },
@@ -133,19 +134,21 @@ export default function ChatbotPanel({ onSelectCase }) {
 
       <div ref={scrollRef} style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: 10, paddingRight: 4 }}>
         {messages.map((m, i) => (
-          <div key={i} style={{ alignSelf: m.role === "user" ? "flex-end" : "flex-start", maxWidth: "78%" }}>
-            <div style={{
-              background: m.role === "user" ? "#1c2c4a" : "#16203a",
-              border: `1px solid ${m.role === "user" ? "#2a3d66" : "#24304a"}`,
-              borderRadius: 10,
-              padding: "10px 13px",
-              fontSize: 13.5,
-              lineHeight: 1.55,
-              whiteSpace: "pre-wrap",
-            }}>
-              {m.text}
-            </div>
-            {m.referencedCaseIds?.length > 0 && (
+          <div key={i} style={{ alignSelf: m.role === "user" ? "flex-end" : "flex-start", maxWidth: m.profile ? "92%" : "78%" }}>
+            {!m.profile && (
+              <div style={{
+                background: m.role === "user" ? "#1c2c4a" : "#16203a",
+                border: `1px solid ${m.role === "user" ? "#2a3d66" : "#24304a"}`,
+                borderRadius: 10,
+                padding: "10px 13px",
+                fontSize: 13.5,
+                lineHeight: 1.55,
+                whiteSpace: "pre-wrap",
+              }}>
+                {m.text}
+              </div>
+            )}
+            {m.referencedCaseIds?.length > 0 && !m.profile && (
               <div className="chip-row" style={{ marginTop: 6 }}>
                 {m.referencedCaseIds.slice(0, 8).map((id) => (
                   <span key={id} className="chip" style={{ cursor: "pointer" }} onClick={() => onSelectCase(id)}>
@@ -154,6 +157,7 @@ export default function ChatbotPanel({ onSelectCase }) {
                 ))}
               </div>
             )}
+            {m.profile && <DossierCard profile={m.profile} onSelectCase={onSelectCase} />}
             <div style={{ fontSize: 10, color: "#5a6786", marginTop: 3 }}>{m.timestamp}</div>
           </div>
         ))}

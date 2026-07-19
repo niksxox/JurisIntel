@@ -11,6 +11,7 @@ CREATE TABLE audit_log (
 	timestamp DATETIME, 
 	user_role VARCHAR, 
 	user_name VARCHAR, 
+	purpose VARCHAR, 
 	action_type VARCHAR, 
 	query_text TEXT, 
 	matched_filters TEXT, 
@@ -42,6 +43,17 @@ CREATE TABLE crime_head (
 	"CrimeGroupName" VARCHAR NOT NULL, 
 	"Active" BOOLEAN, 
 	PRIMARY KEY ("CrimeHeadID")
+);
+
+CREATE TABLE crime_review_stat (
+	id INTEGER NOT NULL, 
+	act_category VARCHAR, 
+	major_head VARCHAR, 
+	minor_head VARCHAR, 
+	month VARCHAR, 
+	year INTEGER, 
+	count_current_month INTEGER, 
+	PRIMARY KEY (id)
 );
 
 CREATE TABLE designation (
@@ -153,6 +165,8 @@ CREATE TABLE unit (
 	"StateID" INTEGER, 
 	"DistrictID" INTEGER, 
 	"Active" BOOLEAN, 
+	"ContactPhone" VARCHAR, 
+	"ContactEmail" VARCHAR, 
 	PRIMARY KEY ("UnitID"), 
 	FOREIGN KEY("TypeID") REFERENCES unit_type ("UnitTypeID"), 
 	FOREIGN KEY("ParentUnit") REFERENCES unit ("UnitID"), 
@@ -178,6 +192,34 @@ CREATE TABLE employee (
 	FOREIGN KEY("UnitID") REFERENCES unit ("UnitID"), 
 	FOREIGN KEY("RankID") REFERENCES rank_master ("RankID"), 
 	FOREIGN KEY("DesignationID") REFERENCES designation ("DesignationID")
+);
+
+CREATE TABLE station_bulletin (
+	id INTEGER NOT NULL, 
+	station_id INTEGER, 
+	author VARCHAR, 
+	subject VARCHAR, 
+	message TEXT, 
+	created_at DATETIME, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(station_id) REFERENCES unit ("UnitID")
+);
+
+CREATE TABLE user_account (
+	id INTEGER NOT NULL, 
+	username VARCHAR NOT NULL, 
+	password_hash VARCHAR NOT NULL, 
+	salt VARCHAR NOT NULL, 
+	full_name VARCHAR, 
+	role VARCHAR NOT NULL, 
+	purpose VARCHAR, 
+	station_id INTEGER, 
+	active BOOLEAN, 
+	created_at DATETIME, 
+	created_by VARCHAR, 
+	PRIMARY KEY (id), 
+	UNIQUE (username), 
+	FOREIGN KEY(station_id) REFERENCES unit ("UnitID")
 );
 
 CREATE TABLE case_master (
@@ -209,6 +251,15 @@ CREATE TABLE case_master (
 	FOREIGN KEY("CrimeMinorHeadID") REFERENCES crime_sub_head ("CrimeSubHeadID"), 
 	FOREIGN KEY("CaseStatusID") REFERENCES case_status_master ("CaseStatusID"), 
 	FOREIGN KEY("CourtID") REFERENCES court ("CourtID")
+);
+
+CREATE TABLE session_token (
+	token VARCHAR NOT NULL, 
+	user_id INTEGER, 
+	created_at DATETIME, 
+	expires_at DATETIME, 
+	PRIMARY KEY (token), 
+	FOREIGN KEY(user_id) REFERENCES user_account (id)
 );
 
 CREATE TABLE accused (
@@ -270,6 +321,23 @@ CREATE TABLE victim (
 	"VictimPolice" BOOLEAN, 
 	PRIMARY KEY ("VictimMasterID"), 
 	FOREIGN KEY("CaseMasterID") REFERENCES case_master ("CaseMasterID")
+);
+
+CREATE TABLE wanted_person (
+	id INTEGER NOT NULL, 
+	name VARCHAR NOT NULL, 
+	aliases VARCHAR, 
+	case_id INTEGER, 
+	reason TEXT, 
+	danger_level VARCHAR, 
+	last_seen_location VARCHAR, 
+	status VARCHAR, 
+	posted_by_station_id INTEGER, 
+	posted_by_user VARCHAR, 
+	created_at DATETIME, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(case_id) REFERENCES case_master ("CaseMasterID"), 
+	FOREIGN KEY(posted_by_station_id) REFERENCES unit ("UnitID")
 );
 
 CREATE TABLE arrest_surrender (
