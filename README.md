@@ -24,55 +24,6 @@ Log in as `admin` to reach **Manage Users** and provision real accounts.
 
 
 
-## The real dataset
-
-`backend/data/CRIME_REVIEW_2021_TO_2024_KARNATAKA.csv` is the real, published
-Karnataka SCRB monthly crime-review statistics you provided (30,940 rows).
-It's **state-level aggregate data only** — no district, station, or
-individual-case detail exists in the source file, so it cannot populate the
-case register (that stays synthetic until real district/case-level data is
-connected). What it does power: the real statewide trend charts on the
-**Trends & Hotspots** tab.
-
-The raw file needed real cleaning before use — `backend/app/crime_stats.py`
-handles it:
-- The `ACT` column had inconsistent whitespace/casing across 17 raw values
-  for what are really 5 categories (`A - IPC Crime`, `A- IPC CRIME`,
-  `A-IPC CRIME`, etc.) — normalized into `IPC Crime`, `Special & Local Laws`,
-  `Crimes Against Women`, `Crimes Against Children`, `Crimes Against SC/ST`.
-- The count column had blank/non-numeric rows — coerced safely, dropped rows
-  that don't parse instead of crashing or silently zeroing them.
-- Loaded once at seed time into a dedicated `CrimeReviewStat` table, kept
-  completely separate from the synthetic FIR tables so real and synthetic
-  data are never mixed or confused for each other.
-
-The Trends tab labels real vs. synthetic data explicitly — it never implies
-precision the data doesn't have.
-
-## The chatbot — dossier style, not a formula dump
-
-Ask "who is `<name>`?" and you get a rendered dossier card: avatar initials,
-a risk-level pill (LOW/MEDIUM/HIGH, colored), a stat grid (cases on file,
-arrest records, co-accused linked, risk score), and chips linking straight to
-each case file — the way a records lookup reads in a procedural drama, not a
-math writeup. The risk *formula* still exists and is fully documented (below,
-and in every API response for admin/audit purposes) but it's never shown in
-the chat itself.
-
-Follow-ups work: ask "who is Ravi Gowda?" then "what about his arrests?" and
-it resolves the pronoun from conversation context.
-
-## Risk scoring formula (internal — not shown in chat)
-
-```
-risk_score = 0.5 * frequency_score + 0.5 * severity_score
-frequency_score = min(case_count / 5, 1) * 100      # saturates at 5+ cases
-severity_score  = avg over their cases of (gravity_weight*0.6 + crime_head_weight*0.4) * 100
-band: High >= 67, Medium >= 34, else Low
-```
-Full breakdown is always in the API response (`/api/criminals/{name}/profile`)
-for anyone auditing a decision — it's just not rendered in the chat bubble.
-
 ## Running it
 
 **Backend**
@@ -110,33 +61,6 @@ best in Chrome).
   with the declared purpose of access attached
 - **Manage Users** (Admin only) — provision accounts; no public sign-up
 
-## What I need from you to close the remaining 🟡 gaps
-
-1. **Zoho Catalyst**: project ID, org ID, and an OAuth token (or a direct
-   Postgres/MySQL connection string if your Data Store exposes one). Drop
-   into `backend/app/zoho_catalyst.py` / `DATABASE_URL` — nothing else
-   changes, the app is already database-agnostic.
-2. **Teammate's AI module**: tell me what it exposes (URL? function?) and
-   it's a swap into `nl_parser.py` / `chat.py`, both isolated for this.
-3. **Real image generation**: send an API key (OpenAI/Gemini/Stability) and
-   I'll wire it in alongside the existing SVG schematic in `scene.py`.
-4. **District/station-level real crime data**, if/when it exists, to replace
-   the synthetic hotspot view on the Trends tab with real numbers.
-
-## Notes for your submission
-
-- **Case-level data is synthetic** (`backend/app/seed.py`), fixed random
-  seed — say so explicitly if you demo this to judges. The **statewide trend
-  statistics are real** (Karnataka SCRB 2021–2024) — also worth saying.
-- Sessions are in-memory-token based (12h expiry), which is enough to
-  demonstrate real login-gated, admin-provisioned, audited access for a
-  datathon prototype. For production, swap `auth.py`'s `login()` /
-  `get_current_user()` for Zoho Catalyst Authentication (or any real auth
-  provider) — every other endpoint already just depends on
-  `get_current_user()` and doesn't care how the token was issued.
-- Chatbot language support is templated, not machine-translated: fixed
-  response phrases are professionally worded per language; free-text data
-  (names, brief facts) stays as recorded in English.
 
 ## Project layout
 
