@@ -3,7 +3,7 @@
 Built for the KSP Datathon 2026, from `Police_FIR_ER_Diagram.pdf` plus the real
 `CRIME_REVIEW_2021_TO_2024_KARNATAKA.csv` dataset: a normalized FIR database,
 a login-gated, role-based investigator dashboard, and an AI assistant that
-returns clean case-file dossiers — covering the full feature brief.
+returns clean case-file dossiers, covering the full feature brief.
 
 ## Login
 
@@ -22,30 +22,7 @@ Default accounts (change these before any real deployment):
 
 Log in as `admin` to reach **Manage Users** and provision real accounts.
 
-## Feature checklist — what's real vs. what's stubbed
 
-| Feature | Status |
-|---|---|
-| Normalized DB matching the ER diagram | ✅ full |
-| Real crime statistics integrated (Karnataka SCRB 2021–2024) | ✅ full — cleaned, normalized, 805K+ incidents, see below |
-| Username/password login, admin-only provisioning, purpose-of-access | ✅ full — session tokens, PBKDF2 hashing |
-| Role-based access, derived from the real session (not a spoofable header) | ✅ full |
-| Dashboard: stats, filters, case register | ✅ full |
-| Criminal network visualization | ✅ full |
-| PDF export (case reports + chat transcripts) | ✅ full |
-| Chatbot — dossier-style criminal lookup, no formula shown | ✅ full — see below |
-| Chatbot — English + Hindi + Kannada/Tamil/Telugu/Malayalam | ✅ full templates |
-| Voice input/output | ✅ full — browser Web Speech API |
-| Context-aware conversation (follow-ups, pronouns) | ✅ full |
-| Explainable AI + audit trail (now includes purpose-of-access) | ✅ full |
-| Crime trend & hotspot detection, predictive early warnings | ✅ full |
-| Scene reconstruction (written + schematic SVG) | ✅ full |
-| Police station directory | ✅ full |
-| Shared inter-station bulletin (any station posts, all see it) | ✅ full |
-| Wanted list (any station posts, network-wide visibility) | ✅ full |
-| Shared database (Zoho Catalyst) | 🟡 adapter written, **not connected** — needs your Catalyst credentials |
-| Photorealistic scene image generation | 🟡 not implemented — needs an external image-gen API key |
-| Teammate's AI module | 🟡 not integrated — needs their API contract |
 
 ## The real dataset
 
