@@ -1,0 +1,9 @@
+{
+  "runtime": "node22",
+  "build": {
+    "command": "npm install && npm run build && mkdir -p build && cp -r .next build/.next && cp -r public build/public && cp package.json build/package.json"
+  },
+  "start": {
+    "command": "node .next/standalone/server.js"
+  }
+}
