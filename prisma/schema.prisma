@@ -1,0 +1,172 @@
+// JurisIntel — Crime Intelligence Platform Schema
+// SQLite datasource
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  password  String
+  name      String
+  role      String   @default("analyst") // admin | analyst | investigator | supervisor
+  district  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  chatSessions ChatSession[]
+  auditLogs    AuditLog[]
+}
+
+model District {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  region    String   // North | South | Central | Coastal | Malnad
+  population Int
+  areaSqKm  Int
+}
+
+model Station {
+  id        String   @id @default(cuid())
+  name      String
+  district  String
+  address   String
+  phone     String
+  latitude  Float
+  longitude Float
+  activeCases Int     @default(0)
+  totalCases Int      @default(0)
+  createdAt DateTime @default(now())
+
+  cases Case[]
+}
+
+model Case {
+  id           String   @id @default(cuid())
+  firNumber    String   @unique
+  title        String
+  category     String   // Theft | Assault | Murder | Cybercrime | Fraud | Burglary | Kidnapping | Drug-Related | Sexual-Offense | Traffic
+  status       String   @default("open") // open | under-investigation | closed | charge-sheeted | cancelled
+  priority     String   @default("medium") // low | medium | high | critical
+  district     String
+  stationId    String
+  station      Station  @relation(fields: [stationId], references: [id])
+  incidentDate DateTime
+  registeredAt DateTime @default(now())
+  closedAt     DateTime?
+  description  String
+  modusOperandi String
+  location     String
+  weaponUsed   String?
+  severity     Int      @default(5) // 1-10
+  accused      Accused[]
+  victims      Victim[]
+  evidence     Evidence[]
+  networkEdgesFrom NetworkEdge[] @relation("fromCase")
+  networkEdgesTo   NetworkEdge[] @relation("toCase")
+}
+
+model Accused {
+  id           String   @id @default(cuid())
+  caseId       String
+  case         Case     @relation(fields: [caseId], references: [id])
+  name         String
+  age          Int
+  gender       String  // Male | Female | Other
+  occupation   String
+  address      String
+  district     String
+  priorConvictions Int  @default(0)
+  riskScore    Int      @default(0) // 0-100
+  status       String   @default("in-custody") // in-custody | absconding | on-bail | arrested
+  isWanted     Boolean  @default(false)
+  photoUrl     String?
+  createdAt    DateTime @default(now())
+}
+
+model Victim {
+  id        String   @id @default(cuid())
+  caseId    String
+  case      Case     @relation(fields: [caseId], references: [id])
+  name      String
+  age       Int
+  gender    String
+  occupation String?
+  injurySeverity String? // none | minor | major | fatal
+  statement String?
+}
+
+model Evidence {
+  id        String   @id @default(cuid())
+  caseId    String
+  case      Case     @relation(fields: [caseId], references: [id])
+  type      String   // physical | digital | testimonial | documentary | forensic
+  description String
+  collectedAt DateTime @default(now())
+  collectedBy String
+  status    String   @default("collected") // collected | analyzed | submitted | rejected
+}
+
+model NetworkEdge {
+  id            String @id @default(cuid())
+  caseId        String
+  fromCase      Case   @relation("fromCase", fields: [caseId], references: [id])
+  relatedCaseId String
+  toCase        Case?  @relation("toCase", fields: [relatedCaseId], references: [id])
+  relationType  String // co-accused | same-modus | shared-evidence | connected-network
+  strength      Int    @default(50) // 0-100
+}
+
+model ChatSession {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  title     String   @default("New Session")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  messages  ChatMessage[]
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  sessionId String
+  session   ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  role      String   // user | assistant | system
+  content   String
+  metadata  String?  // JSON string for extra context (cases referenced, etc.)
+  createdAt DateTime @default(now())
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  action    String   // login | view-case | search | export | update | delete
+  entity    String?
+  entityId  String?
+  details   String?
+  ipAddress String?
+  createdAt DateTime @default(now())
+}
+
+model FinancialTransaction {
+  id            String   @id @default(cuid())
+  transactionId String   @unique
+  caseId        String?
+  amount        Float
+  currency      String   @default("INR")
+  senderName    String
+  receiverName  String
+  bank          String
+  date          DateTime
+  flagged       Boolean  @default(false)
+  flagReason    String?  // structuring | rapid-movement | high-risk-jurisdiction | unusual-pattern
+  riskScore     Int      @default(0)
+  district      String
+}
