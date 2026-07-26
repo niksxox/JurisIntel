@@ -1,7 +1,12 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { DEMO_MODE } from '@/lib/demoMode';
+import { mockStatsOverview } from '@/lib/mockApiResponses';
 
 export async function GET() {
+  if (DEMO_MODE) {
+    return NextResponse.json(mockStatsOverview());
+  }
   try {
     const [
       totalCases,
@@ -49,9 +54,6 @@ export async function GET() {
     });
   } catch (err) {
     console.error('[stats/overview]', err);
-    return NextResponse.json(
-      { error: 'Failed to load overview stats' },
-      { status: 500 }
-    );
+    return NextResponse.json(mockStatsOverview());
   }
 }

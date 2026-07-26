@@ -1,7 +1,10 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { DEMO_MODE } from '@/lib/demoMode';
+import { mockFinancialOverview } from '@/lib/mockApiResponses';
 
 export async function GET() {
+  if (DEMO_MODE) { return NextResponse.json(mockFinancialOverview()); }
   try {
     const txns = await db.financialTransaction.findMany({
       select: { amount: true, flagged: true, bank: true },
@@ -37,6 +40,6 @@ export async function GET() {
     });
   } catch (err) {
     console.error('[financial/overview]', err);
-    return NextResponse.json({ error: 'Failed to load financial overview' }, { status: 500 });
+    return NextResponse.json(mockFinancialOverview());
   }
 }

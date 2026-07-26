@@ -1,11 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { DEMO_MODE } from '@/lib/demoMode';
+import { mockChatHistory } from '@/lib/mockApiResponses';
 
 export async function GET(req: NextRequest) {
   try {
     const sessionId = req.nextUrl.searchParams.get('sessionId');
     if (!sessionId) {
       return NextResponse.json({ error: 'sessionId is required' }, { status: 400 });
+    }
+
+    if (DEMO_MODE) {
+      return NextResponse.json(mockChatHistory(sessionId || ''));
     }
 
     const messages = await db.chatMessage.findMany({
@@ -32,6 +38,6 @@ export async function GET(req: NextRequest) {
     });
   } catch (err) {
     console.error('[chat/history]', err);
-    return NextResponse.json({ error: 'Failed to load chat history' }, { status: 500 });
+    return NextResponse.json(mockChatHistory(''));
   }
 }

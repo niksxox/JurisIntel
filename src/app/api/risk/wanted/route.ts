@@ -1,7 +1,10 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { DEMO_MODE } from '@/lib/demoMode';
+import { mockWantedList } from '@/lib/mockApiResponses';
 
 export async function GET() {
+  if (DEMO_MODE) { return NextResponse.json(mockWantedList()); }
   try {
     const wanted = await db.accused.findMany({
       where: { isWanted: true },
@@ -38,6 +41,6 @@ export async function GET() {
     return NextResponse.json(data);
   } catch (err) {
     console.error('[risk/wanted]', err);
-    return NextResponse.json({ error: 'Failed to load wanted list' }, { status: 500 });
+    return NextResponse.json(mockWantedList());
   }
 }

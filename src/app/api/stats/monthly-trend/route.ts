@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { DEMO_MODE } from '@/lib/demoMode';
+import { mockStatsMonthlyTrend } from '@/lib/mockApiResponses';
 
 function monthKey(d: Date): string {
   const y = d.getUTCFullYear();
@@ -8,6 +10,11 @@ function monthKey(d: Date): string {
 }
 
 export async function GET(req: NextRequest) {
+  if (DEMO_MODE) {
+    return NextResponse.json(
+      mockStatsMonthlyTrend(req.nextUrl.searchParams.get('category')?.trim() || undefined)
+    );
+  }
   try {
     const category = req.nextUrl.searchParams.get('category')?.trim() || undefined;
 
@@ -50,6 +57,8 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(result);
   } catch (err) {
     console.error('[stats/monthly-trend]', err);
-    return NextResponse.json({ error: 'Failed to load monthly trend' }, { status: 500 });
+    return NextResponse.json(
+      mockStatsMonthlyTrend(req.nextUrl.searchParams.get('category')?.trim() || undefined)
+    );
   }
 }

@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { DEMO_MODE } from '@/lib/demoMode';
+import { mockChatSend } from '@/lib/mockApiResponses';
 
 const SYSTEM_PROMPT =
   'You are JURISINTEL, an AI intelligence assistant for the Karnataka State Police crime dashboard. ' +
@@ -131,14 +133,20 @@ async function buildContext(message: string): Promise<ContextSummary> {
 }
 
 export async function POST(req: NextRequest) {
+  let message = '';
   try {
     const body = await req.json().catch(() => ({}));
-    const message: string = (body?.message || '').toString().trim();
+    message = (body?.message || '').toString().trim();
     const sessionId: string | undefined = body?.sessionId ? String(body.sessionId) : undefined;
     const username: string | undefined = body?.username ? String(body.username) : undefined;
 
     if (!message) {
       return NextResponse.json({ error: 'Message is required' }, { status: 400 });
+    }
+
+    if (DEMO_MODE) {
+      const result = mockChatSend(message!);
+      return NextResponse.json(result);
     }
 
     // Resolve user
@@ -230,9 +238,6 @@ export async function POST(req: NextRequest) {
     });
   } catch (err) {
     console.error('[chat/send]', err);
-    return NextResponse.json(
-      { error: 'Failed to process chat message' },
-      { status: 500 }
-    );
+    return NextResponse.json(mockChatSend(message || 'overview'));
   }
 }

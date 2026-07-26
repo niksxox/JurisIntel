@@ -1,7 +1,12 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { DEMO_MODE } from '@/lib/demoMode';
+import { mockByCrimeType } from '@/lib/mockApiResponses';
 
 export async function GET() {
+  if (DEMO_MODE) {
+    return NextResponse.json(mockByCrimeType());
+  }
   try {
     const rows = await db.case.groupBy({
       by: ['category'],
@@ -18,6 +23,6 @@ export async function GET() {
     return NextResponse.json(data);
   } catch (err) {
     console.error('[trends/by-crime-type]', err);
-    return NextResponse.json({ error: 'Failed to load crime types' }, { status: 500 });
+    return NextResponse.json(mockByCrimeType());
   }
 }

@@ -1,7 +1,12 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { DEMO_MODE } from '@/lib/demoMode';
+import { mockTrendsHotspots } from '@/lib/mockApiResponses';
 
 export async function GET() {
+  if (DEMO_MODE) {
+    return NextResponse.json(mockTrendsHotspots());
+  }
   try {
     // Aggregate by district: count, avg severity, top category
     const rows = await db.case.groupBy({
@@ -39,6 +44,6 @@ export async function GET() {
     return NextResponse.json(data);
   } catch (err) {
     console.error('[trends/hotspots]', err);
-    return NextResponse.json({ error: 'Failed to load hotspots' }, { status: 500 });
+    return NextResponse.json(mockTrendsHotspots());
   }
 }

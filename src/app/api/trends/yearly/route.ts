@@ -1,7 +1,12 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { DEMO_MODE } from '@/lib/demoMode';
+import { mockYearlyTrend } from '@/lib/mockApiResponses';
 
 export async function GET() {
+  if (DEMO_MODE) {
+    return NextResponse.json(mockYearlyTrend());
+  }
   try {
     const cases = await db.case.findMany({
       select: { incidentDate: true },
@@ -17,6 +22,6 @@ export async function GET() {
     return NextResponse.json(data);
   } catch (err) {
     console.error('[trends/yearly]', err);
-    return NextResponse.json({ error: 'Failed to load yearly trend' }, { status: 500 });
+    return NextResponse.json(mockYearlyTrend());
   }
 }

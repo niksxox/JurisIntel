@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { DEMO_MODE } from '@/lib/demoMode';
+import { mockDemographics } from '@/lib/mockApiResponses';
 
 function ageBucket(age: number): string {
   if (age <= 25) return '18-25';
@@ -10,6 +12,7 @@ function ageBucket(age: number): string {
 }
 
 export async function GET() {
+  if (DEMO_MODE) { return NextResponse.json(mockDemographics()); }
   try {
     const accused = await db.accused.findMany({
       select: { age: true, gender: true, occupation: true },
@@ -38,6 +41,6 @@ export async function GET() {
     });
   } catch (err) {
     console.error('[socio/demographics]', err);
-    return NextResponse.json({ error: 'Failed to load demographics' }, { status: 500 });
+    return NextResponse.json(mockDemographics());
   }
 }

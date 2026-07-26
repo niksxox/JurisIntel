@@ -1,7 +1,10 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { DEMO_MODE } from '@/lib/demoMode';
+import { mockModusOperandi } from '@/lib/mockApiResponses';
 
 export async function GET() {
+  if (DEMO_MODE) { return NextResponse.json(mockModusOperandi()); }
   try {
     const rows = await db.case.groupBy({
       by: ['modusOperandi'],
@@ -13,6 +16,6 @@ export async function GET() {
     return NextResponse.json(data);
   } catch (err) {
     console.error('[trends/modus-operandi]', err);
-    return NextResponse.json({ error: 'Failed to load modus operandi' }, { status: 500 });
+    return NextResponse.json(mockModusOperandi());
   }
 }

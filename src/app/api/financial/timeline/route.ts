@@ -1,11 +1,14 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { DEMO_MODE } from '@/lib/demoMode';
+import { mockFinancialTimeline } from '@/lib/mockApiResponses';
 
 function monthKey(d: Date): string {
   return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}`;
 }
 
 export async function GET() {
+  if (DEMO_MODE) { return NextResponse.json(mockFinancialTimeline()); }
   try {
     const txns = await db.financialTransaction.findMany({
       select: { date: true, amount: true, flagged: true },
@@ -34,6 +37,6 @@ export async function GET() {
     return NextResponse.json(data);
   } catch (err) {
     console.error('[financial/timeline]', err);
-    return NextResponse.json({ error: 'Failed to load timeline' }, { status: 500 });
+    return NextResponse.json(mockFinancialTimeline());
   }
 }

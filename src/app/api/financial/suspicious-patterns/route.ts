@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { DEMO_MODE } from '@/lib/demoMode';
+import { mockSuspiciousPatterns } from '@/lib/mockApiResponses';
 
 const DESCRIPTIONS: Record<string, string> = {
   structuring:
@@ -13,6 +15,7 @@ const DESCRIPTIONS: Record<string, string> = {
 };
 
 export async function GET() {
+  if (DEMO_MODE) { return NextResponse.json(mockSuspiciousPatterns()); }
   try {
     const flagged = await db.financialTransaction.findMany({
       where: { flagged: true, flagReason: { not: null } },
@@ -40,6 +43,6 @@ export async function GET() {
     return NextResponse.json(data);
   } catch (err) {
     console.error('[financial/suspicious-patterns]', err);
-    return NextResponse.json({ error: 'Failed to load suspicious patterns' }, { status: 500 });
+    return NextResponse.json(mockSuspiciousPatterns());
   }
 }

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createHash } from 'crypto';
 import { db } from '@/lib/db';
+import { DEMO_MODE } from '@/lib/demoMode';
+import { mockLogin } from '@/lib/mockApiResponses';
 
 export async function POST(req: NextRequest) {
   try {
@@ -13,6 +15,12 @@ export async function POST(req: NextRequest) {
         { error: 'Username and password are required' },
         { status: 400 }
       );
+    }
+
+    if (DEMO_MODE) {
+      const user = mockLogin(username!, password!);
+      if (!user) return NextResponse.json({ error: 'Invalid username or password' }, { status: 401 });
+      return NextResponse.json(user);
     }
 
     const user = await db.user.findUnique({ where: { username } });

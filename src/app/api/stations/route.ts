@@ -1,7 +1,10 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { DEMO_MODE } from '@/lib/demoMode';
+import { mockStations } from '@/lib/mockApiResponses';
 
 export async function GET() {
+  if (DEMO_MODE) { return NextResponse.json(mockStations()); }
   try {
     const stations = await db.station.findMany({
       orderBy: { name: 'asc' },
@@ -21,6 +24,6 @@ export async function GET() {
     return NextResponse.json(stations);
   } catch (err) {
     console.error('[stations]', err);
-    return NextResponse.json({ error: 'Failed to load stations' }, { status: 500 });
+    return NextResponse.json(mockStations());
   }
 }

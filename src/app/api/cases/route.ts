@@ -1,87 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { Prisma } from '@prisma/client';
-
-const DEMO_CASES = [
-  {
-    id: "1",
-    firNumber: "FIR/2026/00001",
-    title: "Mobile Phone Theft",
-    category: "Theft",
-    status: "Under Investigation",
-    priority: "High",
-    district: "Bengaluru Urban",
-    station: {
-      name: "Cubbon Park Police Station",
-      district: "Bengaluru Urban",
-    },
-    incidentDate: "2026-07-20T10:30:00Z",
-    registeredAt: "2026-07-20T12:15:00Z",
-    severity: 7,
-    accusedCount: 2,
-    victimsCount: 1,
-    evidenceCount: 5,
-  },
-  {
-    id: "2",
-    firNumber: "FIR/2026/00002",
-    title: "UPI Fraud",
-    category: "Cybercrime",
-    status: "Open",
-    priority: "Critical",
-    district: "Mysuru",
-    station: {
-      name: "Cyber Crime Police Station",
-      district: "Mysuru",
-    },
-    incidentDate: "2026-07-18T09:00:00Z",
-    registeredAt: "2026-07-18T09:45:00Z",
-    severity: 9,
-    accusedCount: 1,
-    victimsCount: 3,
-    evidenceCount: 8,
-  },
-  {
-    id: "3",
-    firNumber: "FIR/2026/00003",
-    title: "Chain Snatching",
-    category: "Robbery",
-    status: "Closed",
-    priority: "Medium",
-    district: "Mangaluru",
-    station: {
-      name: "Mangaluru North PS",
-      district: "Mangaluru",
-    },
-    incidentDate: "2026-07-10T18:20:00Z",
-    registeredAt: "2026-07-10T19:00:00Z",
-    severity: 5,
-    accusedCount: 1,
-    victimsCount: 1,
-    evidenceCount: 4,
-  },
-  {
-    id: "4",
-    firNumber: "FIR/2026/00004",
-    title: "Financial Scam",
-    category: "Fraud",
-    status: "Charge Sheet Filed",
-    priority: "High",
-    district: "Hubballi-Dharwad",
-    station: {
-      name: "Economic Offences Wing",
-      district: "Hubballi-Dharwad",
-    },
-    incidentDate: "2026-06-30T15:00:00Z",
-    registeredAt: "2026-06-30T16:30:00Z",
-    severity: 8,
-    accusedCount: 4,
-    victimsCount: 6,
-    evidenceCount: 15,
-  },
-];
+import { DEMO_MODE } from '@/lib/demoMode';
+import { mockCasesList } from '@/lib/mockApiResponses';
 
 export async function GET(req: NextRequest) {
+  if (DEMO_MODE) {
+    const sp = req.nextUrl.searchParams;
+    return NextResponse.json(mockCasesList({
+      page: Math.max(1, parseInt(sp.get('page') || '1', 10)),
+      limit: Math.min(100, Math.max(1, parseInt(sp.get('limit') || '20', 10))),
+      q: sp.get('q')?.trim() || undefined,
+      category: sp.get('category')?.trim() || undefined,
+      status: sp.get('status')?.trim() || undefined,
+      district: sp.get('district')?.trim() || undefined,
+      priority: sp.get('priority')?.trim() || undefined,
+    }));
+  }
+
   try {
     const sp = req.nextUrl.searchParams;
 
@@ -173,12 +109,9 @@ export async function GET(req: NextRequest) {
   } catch (err) {
     console.error("[cases] Falling back to demo mode", err);
 
-    return NextResponse.json({
-      data: DEMO_CASES,
-      total: DEMO_CASES.length,
+    return NextResponse.json(mockCasesList({
       page: 1,
-      limit: DEMO_CASES.length,
-      demoMode: true,
-    });
+      limit: 20,
+    }));
   }
 }

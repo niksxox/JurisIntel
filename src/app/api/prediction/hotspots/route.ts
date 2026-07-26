@@ -1,7 +1,10 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { DEMO_MODE } from '@/lib/demoMode';
+import { mockPredictionHotspots } from '@/lib/mockApiResponses';
 
 export async function GET() {
+  if (DEMO_MODE) { return NextResponse.json(mockPredictionHotspots()); }
   try {
     // Use the latest case registeredAt as the reference "now" — this makes
     // the prediction work correctly with the seeded data (which only goes
@@ -63,6 +66,6 @@ export async function GET() {
     return NextResponse.json(predictions.slice(0, 5));
   } catch (err) {
     console.error('[prediction/hotspots]', err);
-    return NextResponse.json({ error: 'Failed to predict hotspots' }, { status: 500 });
+    return NextResponse.json(mockPredictionHotspots());
   }
 }

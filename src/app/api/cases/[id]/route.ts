@@ -1,12 +1,21 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { DEMO_MODE } from '@/lib/demoMode';
+import { mockCaseDetail } from '@/lib/mockApiResponses';
 
 export async function GET(
   _req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
+
+  if (DEMO_MODE) {
+    const data = mockCaseDetail(id);
+    if (!data) return NextResponse.json({ error: 'Case not found' }, { status: 404 });
+    return NextResponse.json(data);
+  }
+
   try {
-    const { id } = await params;
     const caseRecord = await db.case.findUnique({
       where: { id },
       include: {
@@ -39,6 +48,6 @@ export async function GET(
     });
   } catch (err) {
     console.error('[cases/[id]]', err);
-    return NextResponse.json({ error: 'Failed to load case detail' }, { status: 500 });
+    return NextResponse.json(mockCaseDetail(id) || {});
   }
 }

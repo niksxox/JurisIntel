@@ -1,7 +1,10 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { DEMO_MODE } from '@/lib/demoMode';
+import { mockRiskOffenders } from '@/lib/mockApiResponses';
 
 export async function GET() {
+  if (DEMO_MODE) { return NextResponse.json(mockRiskOffenders()); }
   try {
     const offenders = await db.accused.findMany({
       where: { riskScore: { gte: 60 } },
@@ -37,6 +40,6 @@ export async function GET() {
     return NextResponse.json(data);
   } catch (err) {
     console.error('[risk/offenders]', err);
-    return NextResponse.json({ error: 'Failed to load high-risk offenders' }, { status: 500 });
+    return NextResponse.json(mockRiskOffenders());
   }
 }

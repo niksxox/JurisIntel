@@ -1,7 +1,10 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { DEMO_MODE } from '@/lib/demoMode';
+import { mockAuditLogs } from '@/lib/mockApiResponses';
 
 export async function GET() {
+  if (DEMO_MODE) { return NextResponse.json(mockAuditLogs()); }
   try {
     const logs = await db.auditLog.findMany({
       orderBy: { createdAt: 'desc' },
@@ -25,6 +28,6 @@ export async function GET() {
     return NextResponse.json(data);
   } catch (err) {
     console.error('[rbac/audit-logs]', err);
-    return NextResponse.json({ error: 'Failed to load audit logs' }, { status: 500 });
+    return NextResponse.json(mockAuditLogs());
   }
 }

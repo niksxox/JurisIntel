@@ -1,11 +1,14 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { DEMO_MODE } from '@/lib/demoMode';
+import { mockForecast } from '@/lib/mockApiResponses';
 
 function monthKey(d: Date): string {
   return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}`;
 }
 
 export async function GET() {
+  if (DEMO_MODE) { return NextResponse.json(mockForecast()); }
   try {
     const cases = await db.case.findMany({
       where: { registeredAt: { gte: new Date('2021-01-01T00:00:00Z') } },
@@ -77,7 +80,7 @@ export async function GET() {
     });
   } catch (err) {
     console.error('[prediction/forecast]', err);
-    return NextResponse.json({ error: 'Failed to forecast' }, { status: 500 });
+    return NextResponse.json(mockForecast());
   }
 }
 

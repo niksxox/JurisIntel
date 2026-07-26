@@ -1,7 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { DEMO_MODE } from '@/lib/demoMode';
+import { mockStatsByDistrict } from '@/lib/mockApiResponses';
 
 export async function GET(req: NextRequest) {
+  if (DEMO_MODE) {
+    return NextResponse.json(
+      mockStatsByDistrict(req.nextUrl.searchParams.get('all') === 'true')
+    );
+  }
   try {
     const all = req.nextUrl.searchParams.get('all') === 'true';
     const rows = await db.case.groupBy({
@@ -14,6 +21,8 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(data);
   } catch (err) {
     console.error('[stats/by-district]', err);
-    return NextResponse.json({ error: 'Failed to load district stats' }, { status: 500 });
+    return NextResponse.json(
+      mockStatsByDistrict(req.nextUrl.searchParams.get('all') === 'true')
+    );
   }
 }
