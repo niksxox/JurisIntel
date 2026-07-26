@@ -1,430 +1,407 @@
-# 🛡️ CrimeVision
-### Intelligent Conversational AI & Crime Analytics Platform for Modern Law Enforcement
+# JurisIntel
 
-![Next.js](https://img.shields.io/badge/Next.js-15-black)
-![FastAPI](https://img.shields.io/badge/FastAPI-0.115-green)
-![Python](https://img.shields.io/badge/Python-3.12-blue)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue)
-![License](https://img.shields.io/badge/License-MIT-yellow)
-![Status](https://img.shields.io/badge/Status-Active-success)
+**AI-Powered Crime Intelligence Platform for Karnataka State Police**
 
-CrimeVision is an AI-powered crime intelligence platform designed for investigators, crime analysts, supervisors, and policymakers. The platform transforms traditional police databases into an intelligent conversational system capable of answering natural language queries, discovering criminal relationships, analysing crime patterns, predicting future crime hotspots, and providing explainable AI-driven investigative insights.
-
-Instead of manually searching thousands of FIRs and reports, officers can simply ask questions in natural language and receive contextual, evidence-backed answers supported by advanced analytics.
-
----
-
-# 📌 Problem Statement
-
-Traditional crime databases are primarily designed for data storage rather than intelligence generation. Investigators often spend significant time manually searching records, identifying patterns, and connecting related incidents.
-
-CrimeVision addresses this challenge by enabling:
-
-- Natural language interaction with police databases
-- AI-assisted investigation support
-- Criminal network discovery
-- Crime trend analysis
-- Behavioural offender profiling
-- Predictive policing
-- Explainable AI for transparent decision making
+<p align="center">
+  <img src="https://img.shields.io/badge/Next.js-15-black?logo=next.js" alt="Next.js" />
+  <img src="https://img.shields.io/badge/React-19-blue?logo=react" alt="React" />
+  <img src="https://img.shields.io/badge/TypeScript-5.x-blue?logo=typescript" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Prisma-6.x-2D3748?logo=prisma" alt="Prisma" />
+  <img src="https://img.shields.io/badge/PostgreSQL-Neon-4169E1?logo=postgresql" alt="PostgreSQL" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-4.x-06B6D4?logo=tailwindcss" alt="Tailwind" />
+  <img src="https://img.shields.io/badge/shadcn/ui-latest-black" alt="shadcn/ui" />
+  <img src="https://img.shields.io/badge/License-MIT-yellow" alt="License" />
+</p>
 
 ---
 
-# 🎯 Objectives
+JurisIntel transforms Karnataka police crime data into actionable intelligence through an interactive analytics dashboard, AI-powered conversational queries, criminal network analysis, financial crime tracking, and predictive policing — all in a single full-stack application.
 
-CrimeVision enables investigators to:
+## Overview
 
-- Query crime databases using natural language
-- Discover hidden relationships between criminals, victims and incidents
-- Analyse crime trends across time and geography
-- Detect organised crime networks
-- Predict future crime hotspots
-- Generate investigation recommendations
-- Produce explainable AI responses backed by evidence
-- Improve proactive law enforcement decision making
+JurisIntel is a production-grade crime intelligence platform built with **Next.js 15**, **Prisma ORM**, and **PostgreSQL**. It provides law enforcement officers with a comprehensive suite of analytical tools powered by realistic Karnataka crime data spanning **32 districts**, **10 crime categories**, and **3000+ FIR records**.
 
----
+The platform works **immediately out of the box** in Demo Mode — no database setup required. When you're ready to go live, flip a single flag and connect your PostgreSQL instance.
 
-# ✨ Key Features
+## Key Features
 
-## 🤖 Conversational Crime Intelligence
+### 📊 Dashboard & KPIs
+Real-time overview cards showing total cases, open/closed status, conviction rate, repeat offenders, critical cases, active stations, and district coverage.
 
-- AI chatbot
-- Context-aware conversations
-- English & Kannada support
-- Voice interaction
-- Natural language to SQL
-- Follow-up questions
-- Chat history
-- PDF export
+### 🔍 Case Management
+Full-text searchable FIR database with **3000+ demo cases** supporting pagination, filtering by category/status/priority/district, and detailed case views with accused, victims, evidence, and network links.
 
-Example:
+### 📈 Crime Trends
+Multi-dimensional trend analysis — by crime type, modus operandi, district hotspots, monthly patterns, and yearly comparisons with percentage breakdowns.
 
-> Show all burglary cases reported in Bengaluru during January 2025.
+### 🗺 Crime Heatmap
+Interactive geospatial visualization with **300+ crime hotspot coordinates** across all 32 Karnataka districts, weighted by severity and categorized by crime type.
 
-> Which accused are repeat offenders?
+### 🕸 Network Analysis
+Criminal relationship graphs showing case-to-case and accused-to-case connections with link strength, centrality scores, and relation types (co-accused, same modus operandi, shared evidence, connected networks).
 
-> Show their criminal network.
+### 💰 Financial Intelligence
+Transaction monitoring with suspicious pattern detection — structuring, rapid movement, high-risk jurisdiction flags, and unusual patterns — with bank-wise breakdowns and monthly timelines.
 
----
+### 🔮 Predictions & Forecasting
+- **Early Warnings**: Crime spike detection by district and category with confidence scores
+- **Hotspot Prediction**: 6-month linear trend projection per district
+- **Crime Forecast**: Exponential smoothing (α=0.3) with 6-month forward forecast and confidence bounds
 
-## 📊 Crime Pattern Analytics
+### ⚖ Risk Assessment
+- **High-Risk Offenders**: Top 20 offenders ranked by risk score (prior convictions × severity)
+- **Wanted List**: All absconding accused with case details and station information
 
-Analyse crime based on:
+### 📋 Socio-Demographic Analytics
+Accused demographic profiling by age bucket (18–56+), gender, and occupation — plus risk factor correlation analysis.
 
-- Crime category
-- District
-- Police station
-- Time
-- Month
-- Year
-- Modus Operandi
-- Investigation status
+### 🤖 AI Chat
+Conversational intelligence assistant that answers natural language queries about crime data, providing contextual analysis with specific numbers, district breakdowns, category trends, and offender statistics.
 
-Visualizations include:
+### 🏢 Station Directory
+Complete police station registry for Karnataka with locations, contact details, and active/total case counts.
 
-- Heatmaps
-- Trend charts
-- District comparison
-- Crime growth analysis
-- Seasonal crime patterns
+### 🔐 Role-Based Access Control
+Four user roles — **Admin**, **Analyst**, **Investigator**, **Supervisor** — with full audit logging.
 
----
+## Demo Mode
 
-## 🕸 Criminal Network Analysis
+JurisIntel ships with a built-in **Demo Mode** that makes the entire application fully functional without any database. When `DEMO_MODE` is enabled, all 31 API routes return realistic, deterministic mock data generated from the same seed dataset that powers the production database.
 
-Automatically discover relationships between:
-
-- Accused
-- Victims
-- Witnesses
-- FIRs
-- Crime Locations
-- Vehicles
-- Financial Accounts
-- Phone Numbers
-
-Capabilities:
-
-- Network Graphs
-- Link Analysis
-- Repeat Offender Detection
-- Gang Identification
-- Organised Crime Discovery
-
----
-
-## 👥 Sociological Crime Insights
-
-Analyse crime based on
-
-- Age
-- Gender
-- Occupation
-- Income Group
-- Education
-- Urban vs Rural
-- Migration
-- Economic Conditions
-
-Identify:
-
-- High-risk demographics
-- Social risk factors
-- Crime distribution
-- Community vulnerability
-
----
-
-## 🧠 Criminology-Based Offender Profiling
-
-Generate AI-assisted offender profiles using
-
-- Previous criminal history
-- Crime frequency
-- Modus Operandi
-- Geographic behaviour
-- Repeat offence probability
-
-Features:
-
-- Risk Score
-- Habitual Offender Detection
-- Behaviour Pattern Analysis
-- Investigation Priority Ranking
-
----
-
-## 📁 Investigator Decision Support
-
-Assist investigators with
-
-- Case summaries
-- Timeline generation
-- Similar historical cases
-- Recommended investigation leads
-- Evidence correlation
-- Automated reports
-
----
-
-## 💰 Financial Crime Analysis
-
-Identify
-
-- Money trails
-- Suspicious transactions
-- Linked bank accounts
-- Fraud patterns
-- Financial crime networks
-
-Supports:
-
-- Financial Intelligence
-- Transaction Graph Analysis
-- Money Laundering Detection
-
----
-
-## 🔮 Crime Forecasting
-
-Machine Learning models predict
-
-- Future hotspots
-- Emerging crime clusters
-- Repeat offences
-- Gang activity
-- Seasonal crime probability
-
-Provides:
-
-- Early Warning Alerts
-- Risk Maps
-- Crime Forecast Dashboard
-
----
-
-## 🔍 Explainable AI
-
-Every AI-generated insight includes
-
-- Supporting evidence
-- Source FIRs
-- Confidence Score
-- Reasoning Path
-- Linked Records
-- Data References
-
-Ensuring transparency and accountability.
-
----
-
-## 🔐 Role-Based Access Control
-
-Supports multiple user roles
-
-- Investigator
-- Crime Analyst
-- Supervisor
-- Administrator
-- Policy Maker
-
-Includes
-
-- Authentication
-- Authorization
-- Audit Logs
-- Secure Access
-- Activity Tracking
-
----
-
-# 🏗 System Architecture
+### How It Works
 
 ```
-                   Users
-                      │
-       ┌──────────────┴──────────────┐
-       │                             │
- Investigator                 Policy Maker
-       │                             │
-       └──────────────┬──────────────┘
-                      │
-              Next.js Frontend
-                      │
-          Natural Language Interface
-                      │
-         NLP + AI Intelligence Engine
-                      │
-    ┌─────────────────┼─────────────────┐
-    │                 │                 │
- Translation     SQL Generator     Context Engine
-    │                 │                 │
-    └─────────────────┼─────────────────┘
-                      │
-                 FastAPI Backend
-                      │
-      ┌───────────────┼───────────────┐
-      │               │               │
- Crime Database   ML Models    Analytics Engine
-      │               │               │
-      └───────────────┼───────────────┘
-                      │
-               AI Generated Insights
+Every API route follows this pattern:
+
+if (DEMO_MODE) {
+    return NextResponse.json(mockData);   // ← instant response
+}
+
+try {
+    // Existing Prisma queries run normally
+} catch (error) {
+    return NextResponse.json(mockData);   // ← graceful fallback
+}
 ```
 
----
+### Demo Data Volumes (matching seed.ts targets)
 
-# 🛠 Tech Stack
+| Entity | Count |
+|---|---|
+| Cases (FIRs) | 3,000 |
+| Victims | 5,000 |
+| Accused | 6,500 |
+| Evidence Records | 13,000 |
+| Financial Transactions | 5,000 |
+| Network Connections | 9,000 |
+| Police Stations | 200+ |
+| Districts | 32 |
+| Users | 24 |
+| Heatmap Coordinates | 300+ |
 
-## Frontend
+### Toggle Demo Mode
 
-- Next.js 15
-- React
-- TypeScript
-- Tailwind CSS
-- ShadCN UI
-- Recharts
-- Cytoscape.js
-- Leaflet
-- React Flow
+In `src/lib/demoMode.ts`:
 
----
+```typescript
+// Set to false to switch to live Prisma/PostgreSQL queries
+export const DEMO_MODE = true;
+```
 
-## Backend
+When switched off, every route immediately falls back to live database queries with graceful degradation — if the database is unavailable, mock data is returned instead of HTTP 500 errors.
 
-- FastAPI
-- Python
-- SQLAlchemy
-- Pydantic
-- JWT Authentication
-- REST APIs
+## Tech Stack
 
----
+| Layer | Technology |
+|---|---|
+| Framework | Next.js 15 (App Router) |
+| Language | TypeScript 5 (Strict Mode) |
+| UI Library | React 19 + shadcn/ui |
+| Styling | Tailwind CSS 4 |
+| ORM | Prisma 6 |
+| Database | PostgreSQL (Neon) / SQLite (dev) |
+| Charts | Recharts |
+| State | Zustand + React Query + React Table |
+| Forms | React Hook Form + Zod |
+| AI | z-ai-web-dev-sdk |
+| Package Manager | Bun / npm |
 
-## AI & Machine Learning
+## Database Schema
 
-- LangChain
-- Sentence Transformers
-- FAISS
-- XGBoost
-- Random Forest
-- Isolation Forest
-- LightGBM
-- Scikit-learn
+The platform models 12 entities:
 
----
+```
+User → ChatSession → ChatMessage
+User → AuditLog
 
-## Database
+District
+Station → Case
+Case → Accused
+Case → Victim
+Case → Evidence
+Case ↔ Case (NetworkEdge)
+Case → FinancialTransaction
+```
 
-- PostgreSQL
-- SQLite (Development)
-- Vector Database (FAISS)
+**Crime Categories**: Theft, Assault, Murder, Cybercrime, Fraud, Burglary, Kidnapping, Drug-Related, Sexual-Offense, Traffic
 
----
+**Case Statuses**: Open, Under Investigation, Closed, Charge-Sheeted, Cancelled
 
-## Authentication
+**Priority Levels**: Low, Medium, High, Critical
 
-- JWT
-- Role-Based Access Control
-- OAuth Ready
+**Karnataka Districts**: 32 districts across 5 regions (North, South, Central, Coastal, Malnad)
 
----
+See [`prisma/schema.prisma`](prisma/schema.prisma) for the full schema definition.
 
-# 🧠 AI Modules
+## Project Structure
 
-### Natural Language Processing
+```
+src/
+├── app/
+│   ├── api/                    # 31 API route handlers
+│   │   ├── auth/login/         # Authentication
+│   │   ├── cases/              # CRUD + search + network
+│   │   ├── chat/               # AI conversation
+│   │   ├── financial/          # Transaction intelligence
+│   │   ├── network/            # Criminal network graph
+│   │   ├── prediction/         # Forecasting & warnings
+│   │   ├── rbac/               # Users & audit logs
+│   │   ├── risk/               # Offenders & wanted list
+│   │   ├── socio/              # Demographics & risk factors
+│   │   ├── stations/           # Police station directory
+│   │   ├── stats/              # KPI aggregation
+│   │   └── trends/             # Crime pattern analysis
+│   ├── layout.tsx
+│   └── page.tsx
+├── components/
+│   ├── jurisintel/
+│   │   ├── Layout.tsx          # App shell & sidebar
+│   │   ├── Login.tsx           # Auth gate
+│   │   └── views/              # 14 page-level view components
+│   └── ui/                     # shadcn/ui primitives
+├── lib/
+│   ├── auth.ts                 # Client-side session helpers
+│   ├── db.ts                   # Prisma client singleton
+│   ├── demoMode.ts             # DEMO_MODE toggle
+│   ├── mockData.ts             # Deterministic mock data generator
+│   ├── mockApiResponses.ts     # 25 mock API response functions
+│   └── utils.ts                # Utility functions
+└── middleware.ts
 
-- Intent Detection
-- Entity Extraction
-- SQL Generation
-- Context Memory
-- Translation
+prisma/
+├── schema.prisma               # Database schema
+└── seed (1).ts                  # Karnataka crime data seeder
+```
 
----
+## Getting Started
 
-### Predictive Analytics
+### Prerequisites
 
-- Crime Forecasting
-- Hotspot Prediction
-- Risk Scoring
-- Trend Detection
+- Node.js 18+ or Bun
+- npm or Bun package manager
 
----
+### Quick Start (Demo Mode — No Database Required)
 
-### Explainable AI
+```bash
+# Clone the repository
+git clone https://github.com/niksxox/JurisIntel.git
+cd JurisIntel
 
-- Feature Importance
-- Evidence Trail
-- Confidence Score
-- Decision Explanation
+# Install dependencies
+npm install
 
----
+# Build and run — works immediately in Demo Mode
+npm run build
+npm run start
+```
 
+Open [http://localhost:3000](http://localhost:3000) and log in with:
 
-# 🚀 Future Enhancements
+| Username | Password | Role |
+|---|---|---|
+| `admin` | Any password | Administrator |
+| `analyst1` | Any password | Analyst |
+| `inv1` | Any password | Investigator |
+| `sup1` | Any password | Supervisor |
 
-- Real-time Crime Monitoring
-- CCTV Analytics Integration
-- Face Recognition
-- Number Plate Recognition
-- Drone Surveillance
-- GIS Mapping
-- Mobile Investigator App
-- Digital Evidence Management
-- Multi-State Crime Intelligence Sharing
-- AI Investigation Assistant
+> In Demo Mode, authentication accepts the 4 usernames above with any password.
 
----
+### Production Setup (With Database)
 
-# 📊 Expected Impact
+```bash
+# 1. Set your database URL
+export DATABASE_URL="postgresql://user:password@host:5432/jurisintel?schema=public"
 
-CrimeVision helps law enforcement agencies
+# 2. Update schema.prisma datasource to postgresql
+#    provider = "postgresql"
 
-- Reduce investigation time
-- Improve crime detection
-- Discover hidden criminal networks
-- Enhance intelligence-led policing
-- Support evidence-based decisions
-- Improve public safety
-- Enable proactive crime prevention
+# 3. Push schema to database
+npm run db:push
 
----
+# 4. Generate Prisma client
+npm run db:generate
 
-# 🔒 Security
+# 5. Seed the database (3000 cases, 6500 accused, etc.)
+bun run "prisma/seed (1).ts"
 
-- JWT Authentication
-- Role-Based Access Control
-- Secure API Access
-- Audit Logging
-- Data Encryption
-- Input Validation
-- SQL Injection Protection
-- Prompt Injection Protection
-- Explainable AI Compliance
+# 6. Disable Demo Mode
+#    In src/lib/demoMode.ts, set: export const DEMO_MODE = false;
 
----
+# 7. Build and run
+npm run build
+npm run start
+```
 
-# 📈 Performance Goals
+## API Reference
 
-- AI response time < **3 seconds**
-- Natural language query accuracy > **90%**
-- Crime hotspot prediction accuracy > **85%**
-- Network graph generation < **2 seconds**
-- Scalable architecture for millions of crime records
+All API routes are under `/api/` and return JSON. In Demo Mode, every endpoint responds with realistic mock data. With `DEMO_MODE=false`, live Prisma queries are used.
 
----
+### Statistics
 
-# 🤝 Contributors
+| Endpoint | Description |
+|---|---|
+| `GET /api/stats/overview` | Dashboard KPIs (total cases, conviction rate, etc.) |
+| `GET /api/stats/by-status` | Case count grouped by status |
+| `GET /api/stats/by-category` | Case count grouped by crime category |
+| `GET /api/stats/by-district?all=true` | Top 10 (or all) districts by case count |
+| `GET /api/stats/monthly-trend?category=` | Monthly case counts 2021–2024 |
 
-Developed as an intelligent AI-powered crime analytics platform for modern law enforcement, enabling conversational intelligence, predictive policing, and explainable investigative analytics.
+### Cases
 
----
+| Endpoint | Description |
+|---|---|
+| `GET /api/cases?page=&limit=&q=&category=&status=&district=&priority=` | Paginated, filterable FIR list |
+| `GET /api/cases/[id]` | Full case detail with accused, victims, evidence |
+| `GET /api/cases/[id]/network` | Case-level network graph (nodes + edges) |
+| `GET /api/cases/districts` | List of all districts with cases |
 
-# 📄 License
+### Trends
+
+| Endpoint | Description |
+|---|---|
+| `GET /api/trends/by-crime-type` | Category distribution with percentages |
+| `GET /api/trends/modus-operandi` | Top 8 modus operandi by frequency |
+| `GET /api/trends/hotspots` | Top 8 districts with avg severity + top category |
+| `GET /api/trends/yearly` | Yearly case counts |
+
+### Financial Intelligence
+
+| Endpoint | Description |
+|---|---|
+| `GET /api/financial/overview` | Total/flagged transactions + bank breakdown |
+| `GET /api/financial/suspicious-patterns` | Flagged transactions grouped by pattern type |
+| `GET /api/financial/timeline` | Monthly transaction volume + flagged count |
+
+### Network Analysis
+
+| Endpoint | Description |
+|---|---|
+| `GET /api/network` | Global criminal network graph (top 30 severe cases) |
+
+### Predictions
+
+| Endpoint | Description |
+|---|---|
+| `GET /api/prediction/early-warnings` | Crime spike alerts with confidence scores |
+| `GET /api/prediction/hotspots` | Top 5 district hotspot predictions |
+| `GET /api/prediction/forecast` | 6-month crime forecast with confidence bounds |
+
+### Risk Assessment
+
+| Endpoint | Description |
+|---|---|
+| `GET /api/risk/offenders` | Top 20 high-risk offenders (risk score >= 60) |
+| `GET /api/risk/wanted` | All wanted/absconding accused |
+
+### Socio-Demographics
+
+| Endpoint | Description |
+|---|---|
+| `GET /api/socio/demographics` | Accused age/gender/occupation breakdown |
+| `GET /api/socio/risk-factors` | Risk factor correlation analysis |
+
+### Other
+
+| Endpoint | Description |
+|---|---|
+| `GET /api/stations` | All police stations with coordinates |
+| `POST /api/auth/login` | User authentication |
+| `POST /api/chat/send` | AI chat with context-aware responses |
+| `GET /api/chat/history?sessionId=` | Chat session message history |
+| `GET /api/rbac/users` | User directory (no passwords) |
+| `GET /api/rbac/audit-logs` | Recent 50 audit log entries |
+
+## Seed Data
+
+The seed script (`prisma/seed (1).ts`) generates a comprehensive Karnataka crime dataset using a deterministic PRNG (mulberry32, seed 42) for full reproducibility.
+
+### Data Sources
+
+- **NCRB-style Karnataka Crime Master CSV** — when available, real district-wise and category-wise case totals from official statistical tables are used as distribution weights
+- **Flat fallback weights** — when CSV is absent, manual proportional weights produce a realistic NCRB-style distribution
+
+### Seed Configuration
+
+```typescript
+TARGET_CASES         = 3,000
+TARGET_VICTIMS       = 5,000
+TARGET_ACCUSED       = 6,500
+TARGET_EVIDENCE      = 13,000
+TARGET_FINANCIAL     = 5,000
+TARGET_NETWORK_EDGES = 9,000
+TARGET_CHAT_SESSIONS = 500
+TARGET_CHAT_MESSAGES = 2,000
+TARGET_AUDIT_LOGS    = 5,000
+```
+
+### Karnataka Coverage
+
+- **32 districts** across 5 regions (North, South, Central, Coastal, Malnad)
+- **10 crime categories** with realistic modus operandi and BNS/IPC sections
+- **200+ police stations** distributed proportionally by district crime volume
+- **Kannada names** (50 first names, 19 last names) for accused and victims
+- **8 major banks** for financial transaction data
+- **12 evidence types** per forensic science conventions
+
+## Scripts
+
+```bash
+npm run dev          # Start dev server on port 3000
+npm run build        # Production build
+npm run start        # Start production server
+npm run lint         # Run ESLint
+npm run db:push      # Push Prisma schema to database
+npm run db:generate  # Generate Prisma client
+npm run db:migrate   # Run Prisma migrations
+npm run db:reset     # Reset database and re-apply migrations
+```
+
+## Pages
+
+| Page | Description |
+|---|---|
+| Dashboard | KPI cards, monthly trend mini-chart, category breakdown |
+| Cases | Searchable, filterable FIR table with pagination |
+| Crime Map | Geospatial heatmap of crime hotspots |
+| Trends | Multi-axis trend analysis by type, MO, district, time |
+| Network Analysis | Interactive criminal network graph |
+| Financial Intelligence | Transaction monitoring and suspicious patterns |
+| Forecast | 6-month crime prediction with exponential smoothing |
+| Risk Assessment | Offender risk scoring and wanted list |
+| Socio Analytics | Demographic profiling and risk factor analysis |
+| AI Chat | Conversational crime intelligence assistant |
+| Stations | Police station directory with map |
+| Users | User management (admin) |
+| Audit Log | Activity tracking and compliance |
+| Search | Global search across all entities |
+
+## License
 
 This project is licensed under the MIT License.
 
 ---
 
-## ⭐ If you found this project useful, consider giving it a star.
+<p align="center">
+  Built for the Karnataka State Police<br/>
+  <em>Intelligence-led policing through data-driven insights</em>
+</p>
