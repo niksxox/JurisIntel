@@ -361,41 +361,6 @@ Includes
 
 ---
 
-# 📂 Project Structure
-
-```
-CrimeVision/
-
-├── frontend/
-│   ├── app/
-│   ├── components/
-│   ├── pages/
-│   ├── hooks/
-│   └── utils/
-│
-├── backend/
-│   ├── api/
-│   ├── models/
-│   ├── services/
-│   ├── schemas/
-│   ├── database/
-│   ├── auth/
-│   └── main.py
-│
-├── ai-services/
-│   ├── nlp/
-│   ├── prediction/
-│   ├── xai/
-│   ├── embeddings/
-│   └── utils/
-│
-├── datasets/
-├── docs/
-├── screenshots/
-└── README.md
-```
-
----
 
 # 🚀 Future Enhancements
 
