@@ -32,6 +32,7 @@ import {
   Activity,
   Target,
 } from 'lucide-react';
+import { safeFetch } from '@/lib/safeFetch';
 
 // ── Types ──────────────────────────────────────────────────────────────
 type ForecastPoint = { month: string; count: number; lower: number; upper: number };
@@ -72,12 +73,6 @@ const TOOLTIP_STYLE = {
   fontSize: '12px',
   color: 'oklch(0.93 0.005 250)',
 } as const;
-
-async function getJSON<T>(url: string): Promise<T> {
-  const r = await fetch(url);
-  if (!r.ok) throw new Error(`Failed: ${url}`);
-  return (await r.json()) as T;
-}
 
 // ── Severity config ────────────────────────────────────────────────────
 const SEVERITY_CFG: Record<
@@ -150,9 +145,9 @@ export function Forecast() {
     (async () => {
       try {
         const [f, h, w] = await Promise.all([
-          getJSON<ForecastResponse>('/api/prediction/forecast'),
-          getJSON<PredictedHotspot[]>('/api/prediction/hotspots'),
-          getJSON<EarlyWarning[]>('/api/prediction/early-warnings'),
+          safeFetch<ForecastResponse>('/api/prediction/forecast'),
+          safeFetch<PredictedHotspot[]>('/api/prediction/hotspots'),
+          safeFetch<EarlyWarning[]>('/api/prediction/early-warnings'),
         ]);
         if (cancelled) return;
         setForecast(f);

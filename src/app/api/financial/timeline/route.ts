@@ -2,13 +2,14 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { DEMO_MODE } from '@/lib/demoMode';
 import { mockFinancialTimeline } from '@/lib/mockApiResponses';
+import { demoResponse, apiResponse } from '@/lib/apiResponse';
 
 function monthKey(d: Date): string {
   return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}`;
 }
 
 export async function GET() {
-  if (DEMO_MODE) { return NextResponse.json(mockFinancialTimeline()); }
+  if (DEMO_MODE) { return demoResponse(mockFinancialTimeline()); }
   try {
     const txns = await db.financialTransaction.findMany({
       select: { date: true, amount: true, flagged: true },
@@ -34,9 +35,9 @@ export async function GET() {
       }))
       .sort((a, b) => a.month.localeCompare(b.month));
 
-    return NextResponse.json(data);
+    return apiResponse(data);
   } catch (err) {
     console.error('[financial/timeline]', err);
-    return NextResponse.json(mockFinancialTimeline());
+    return demoResponse(mockFinancialTimeline());
   }
 }

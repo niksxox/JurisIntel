@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Info } from 'lucide-react';
+import { safeFetch } from '@/lib/safeFetch';
 
 // ── Types ──────────────────────────────────────────────────────────────
 type AuditEntry = {
@@ -20,12 +21,6 @@ type AuditEntry = {
 };
 
 // ── Helpers ────────────────────────────────────────────────────────────
-async function getJSON<T>(url: string): Promise<T> {
-  const r = await fetch(url);
-  if (!r.ok) throw new Error(`Failed: ${url}`);
-  return (await r.json()) as T;
-}
-
 function formatTimestamp(iso: string): string {
   const d = new Date(iso);
   const day = String(d.getDate()).padStart(2, '0');
@@ -69,7 +64,7 @@ export function AuditLog() {
     let cancelled = false;
     (async () => {
       try {
-        const data = await getJSON<AuditEntry[]>('/api/rbac/audit-logs');
+        const data = await safeFetch<AuditEntry[]>('/api/rbac/audit-logs');
         if (cancelled) return;
         setLogs(data);
       } catch (e) {

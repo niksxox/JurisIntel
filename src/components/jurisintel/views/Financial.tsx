@@ -20,6 +20,7 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { IndianRupee, AlertTriangle, TrendingUp, Landmark } from 'lucide-react';
+import { safeFetch } from '@/lib/safeFetch';
 
 // ── Types ──────────────────────────────────────────────────────────────
 type OverviewData = {
@@ -59,12 +60,6 @@ const TOOLTIP_STYLE = {
 } as const;
 
 // ── Helpers ────────────────────────────────────────────────────────────
-async function getJSON<T>(url: string): Promise<T> {
-  const r = await fetch(url);
-  if (!r.ok) throw new Error(`Failed: ${url}`);
-  return (await r.json()) as T;
-}
-
 function formatINR(amount: number): string {
   if (amount >= 10000000) {
     return `₹${(amount / 10000000).toFixed(2)}Cr`;
@@ -118,9 +113,9 @@ export function Financial() {
     (async () => {
       try {
         const [ov, pt, tl] = await Promise.all([
-          getJSON<OverviewData>('/api/financial/overview'),
-          getJSON<PatternRow[]>('/api/financial/suspicious-patterns'),
-          getJSON<TimelineRow[]>('/api/financial/timeline'),
+          safeFetch<OverviewData>('/api/financial/overview'),
+          safeFetch<PatternRow[]>('/api/financial/suspicious-patterns'),
+          safeFetch<TimelineRow[]>('/api/financial/timeline'),
         ]);
         if (cancelled) return;
         setOverview(ov);

@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { DEMO_MODE } from '@/lib/demoMode';
+import { demoResponse, apiResponse } from '@/lib/apiResponse';
 import { mockEarlyWarnings } from '@/lib/mockApiResponses';
 
 export async function GET() {
-  if (DEMO_MODE) { return NextResponse.json(mockEarlyWarnings()); }
+  if (DEMO_MODE) { return demoResponse(mockEarlyWarnings()); }
   try {
     // Use the latest case registeredAt as the reference "now" so the warnings
     // are relative to the actual data (seeded data ends in 2024).
@@ -108,9 +109,9 @@ export async function GET() {
       }
     }
 
-    return NextResponse.json(final);
+    return apiResponse(final);
   } catch (err) {
     console.error('[prediction/early-warnings]', err);
-    return NextResponse.json(mockEarlyWarnings());
+    return demoResponse(mockEarlyWarnings());
   }
 }

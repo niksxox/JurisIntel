@@ -2,10 +2,11 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { DEMO_MODE } from '@/lib/demoMode';
 import { mockStatsOverview } from '@/lib/mockApiResponses';
+import { demoResponse, apiResponse } from '@/lib/apiResponse';
 
 export async function GET() {
   if (DEMO_MODE) {
-    return NextResponse.json(mockStatsOverview());
+    return demoResponse(mockStatsOverview());
   }
   try {
     const [
@@ -42,7 +43,7 @@ export async function GET() {
         ? Number((((closedChargeSheeted || disposedCases) / totalCases) * 100).toFixed(1))
         : 0;
 
-    return NextResponse.json({
+    return apiResponse({
       totalCases,
       openCases,
       closedCases: disposedCases,
@@ -54,6 +55,6 @@ export async function GET() {
     });
   } catch (err) {
     console.error('[stats/overview]', err);
-    return NextResponse.json(mockStatsOverview());
+    return demoResponse(mockStatsOverview());
   }
 }

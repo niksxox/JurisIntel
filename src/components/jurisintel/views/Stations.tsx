@@ -17,6 +17,7 @@ import {
   TableCell,
 } from '@/components/ui/table';
 import { Building2, Phone, MapPin, FileWarning } from 'lucide-react';
+import { safeFetch } from '@/lib/safeFetch';
 
 // ── Types ──────────────────────────────────────────────────────────────
 type Station = {
@@ -31,13 +32,6 @@ type Station = {
   totalCases: number;
 };
 
-// ── Helper ─────────────────────────────────────────────────────────────
-async function getJSON<T>(url: string): Promise<T> {
-  const r = await fetch(url);
-  if (!r.ok) throw new Error(`Failed: ${url}`);
-  return (await r.json()) as T;
-}
-
 // ── Main component ─────────────────────────────────────────────────────
 export function Stations() {
   const [stations, setStations] = useState<Station[] | null>(null);
@@ -48,7 +42,7 @@ export function Stations() {
     let cancelled = false;
     (async () => {
       try {
-        const data = await getJSON<Station[]>('/api/stations');
+        const data = await safeFetch<Station[]>('/api/stations');
         if (cancelled) return;
         setStations(data);
       } catch (e) {

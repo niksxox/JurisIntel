@@ -2,9 +2,10 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { DEMO_MODE } from '@/lib/demoMode';
 import { mockNetwork } from '@/lib/mockApiResponses';
+import { demoResponse, apiResponse } from '@/lib/apiResponse';
 
 export async function GET() {
-  if (DEMO_MODE) { return NextResponse.json(mockNetwork()); }
+  if (DEMO_MODE) { return demoResponse(mockNetwork()); }
   try {
     // Pick top 30 cases by severity (reasonable node size)
     const cases = await db.case.findMany({
@@ -69,9 +70,9 @@ export async function GET() {
       });
     }
 
-    return NextResponse.json({ nodes, edges });
+    return apiResponse({ nodes, edges });
   } catch (err) {
     console.error('[network]', err);
-    return NextResponse.json(mockNetwork());
+    return demoResponse(mockNetwork());
   }
 }

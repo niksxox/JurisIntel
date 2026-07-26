@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AlertTriangle, Users, Gauge, Flame, Fingerprint, MapPin } from 'lucide-react';
+import { safeFetch } from '@/lib/safeFetch';
 
 interface WantedOffender {
   id: string;
@@ -38,11 +39,11 @@ export function WantedList() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/risk/wanted')
-      .then(r => r.json())
-      .then(d => setData(Array.isArray(d) ? d : []))
-      .catch(() => setData([]))
-      .finally(() => setLoading(false));
+    (async () => {
+      const data = await safeFetch<any[]>('/api/risk/wanted');
+      setData(Array.isArray(data) ? data : []);
+      setLoading(false);
+    })();
   }, []);
 
   const total = data?.length ?? 0;

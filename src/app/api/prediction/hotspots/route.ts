@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { DEMO_MODE } from '@/lib/demoMode';
+import { demoResponse, apiResponse } from '@/lib/apiResponse';
 import { mockPredictionHotspots } from '@/lib/mockApiResponses';
 
 export async function GET() {
-  if (DEMO_MODE) { return NextResponse.json(mockPredictionHotspots()); }
+  if (DEMO_MODE) { return demoResponse(mockPredictionHotspots()); }
   try {
     // Use the latest case registeredAt as the reference "now" — this makes
     // the prediction work correctly with the seeded data (which only goes
@@ -63,9 +64,9 @@ export async function GET() {
     }
 
     predictions.sort((a, b) => b.predictedCount - a.predictedCount);
-    return NextResponse.json(predictions.slice(0, 5));
+    return apiResponse(predictions.slice(0, 5));
   } catch (err) {
     console.error('[prediction/hotspots]', err);
-    return NextResponse.json(mockPredictionHotspots());
+    return demoResponse(mockPredictionHotspots());
   }
 }

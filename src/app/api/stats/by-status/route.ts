@@ -2,10 +2,11 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { DEMO_MODE } from '@/lib/demoMode';
 import { mockStatsByStatus } from '@/lib/mockApiResponses';
+import { demoResponse, apiResponse } from '@/lib/apiResponse';
 
 export async function GET() {
   if (DEMO_MODE) {
-    return NextResponse.json(mockStatsByStatus());
+    return demoResponse(mockStatsByStatus());
   }
   try {
     const rows = await db.case.groupBy({
@@ -14,9 +15,9 @@ export async function GET() {
       orderBy: { _count: { status: 'desc' } },
     });
     const data = rows.map((r) => ({ status: r.status, count: r._count._all }));
-    return NextResponse.json(data);
+    return apiResponse(data);
   } catch (err) {
     console.error('[stats/by-status]', err);
-    return NextResponse.json(mockStatsByStatus());
+    return demoResponse(mockStatsByStatus());
   }
 }

@@ -3,11 +3,12 @@ import { db } from '@/lib/db';
 import { Prisma } from '@prisma/client';
 import { DEMO_MODE } from '@/lib/demoMode';
 import { mockCasesList } from '@/lib/mockApiResponses';
+import { demoResponse, apiResponse } from '@/lib/apiResponse';
 
 export async function GET(req: NextRequest) {
   if (DEMO_MODE) {
     const sp = req.nextUrl.searchParams;
-    return NextResponse.json(mockCasesList({
+    return demoResponse(mockCasesList({
       page: Math.max(1, parseInt(sp.get('page') || '1', 10)),
       limit: Math.min(100, Math.max(1, parseInt(sp.get('limit') || '20', 10))),
       q: sp.get('q')?.trim() || undefined,
@@ -99,7 +100,7 @@ export async function GET(req: NextRequest) {
       evidenceCount: c._count.evidence,
     }));
 
-    return NextResponse.json({
+    return apiResponse({
       data,
       total,
       page,
@@ -109,7 +110,7 @@ export async function GET(req: NextRequest) {
   } catch (err) {
     console.error("[cases] Falling back to demo mode", err);
 
-    return NextResponse.json(mockCasesList({
+    return demoResponse(mockCasesList({
       page: 1,
       limit: 20,
     }));

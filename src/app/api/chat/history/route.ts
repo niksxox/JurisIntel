@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { DEMO_MODE } from '@/lib/demoMode';
 import { mockChatHistory } from '@/lib/mockApiResponses';
+import { demoResponse, apiResponse } from '@/lib/apiResponse';
 
 export async function GET(req: NextRequest) {
   try {
@@ -11,7 +12,7 @@ export async function GET(req: NextRequest) {
     }
 
     if (DEMO_MODE) {
-      return NextResponse.json(mockChatHistory(sessionId || ''));
+      return demoResponse(mockChatHistory(sessionId || ''));
     }
 
     const messages = await db.chatMessage.findMany({
@@ -26,7 +27,7 @@ export async function GET(req: NextRequest) {
       },
     });
 
-    return NextResponse.json({
+    return apiResponse({
       sessionId,
       messages: messages.map((m) => ({
         id: m.id,
@@ -38,6 +39,6 @@ export async function GET(req: NextRequest) {
     });
   } catch (err) {
     console.error('[chat/history]', err);
-    return NextResponse.json(mockChatHistory(''));
+    return demoResponse(mockChatHistory(''));
   }
 }

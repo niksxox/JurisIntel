@@ -20,6 +20,7 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Users, ShieldAlert, Briefcase } from 'lucide-react';
+import { safeFetch } from '@/lib/safeFetch';
 
 // ── Types ──────────────────────────────────────────────────────────────
 type AgeRow = { range: string; count: number };
@@ -57,12 +58,6 @@ const GENDER_COLORS: Record<string, string> = {
 };
 
 // ── Helpers ────────────────────────────────────────────────────────────
-async function getJSON<T>(url: string): Promise<T> {
-  const r = await fetch(url);
-  if (!r.ok) throw new Error(`Failed: ${url}`);
-  return (await r.json()) as T;
-}
-
 function riskBadgeClass(avgRisk: number): string {
   if (avgRisk > 60) return 'border-ops-red/40 text-ops-red bg-ops-red/10';
   if (avgRisk > 40) return 'border-ops-amber/40 text-ops-amber bg-ops-amber/10';
@@ -107,8 +102,8 @@ export function SocioDemo() {
     (async () => {
       try {
         const [d, r] = await Promise.all([
-          getJSON<DemographicsData>('/api/socio/demographics'),
-          getJSON<RiskRow[]>('/api/socio/risk-factors'),
+          safeFetch<DemographicsData>('/api/socio/demographics'),
+          safeFetch<RiskRow[]>('/api/socio/risk-factors'),
         ]);
         if (cancelled) return;
         setDemo(d);

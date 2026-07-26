@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Search as SearchIcon, FileText, Database } from 'lucide-react';
+import { safeFetch } from '@/lib/safeFetch';
 
 // ── Types ──────────────────────────────────────────────────────────────
 type CaseResult = {
@@ -76,16 +77,10 @@ export function Search() {
       return;
     }
     setLoading(true);
-    try {
-      const r = await fetch(`/api/cases?q=${encodeURIComponent(q)}&limit=20`);
-      const data = (await r.json()) as CasesResponse;
-      setResults(data);
-    } catch {
-      setResults(null);
-    } finally {
-      setLoading(false);
-      setSearched(true);
-    }
+    const data = await safeFetch<CasesResponse>(`/api/cases?q=${encodeURIComponent(q)}&limit=20`);
+    setResults(data ?? null);
+    setLoading(false);
+    setSearched(true);
   }, []);
 
   useEffect(() => {

@@ -21,6 +21,7 @@ import {
 import {
   FolderOpen, Search, ChevronLeft, ChevronRight, X, MapPin, Calendar, Scale, AlertTriangle, FileText, Users, Shield, Link2,
 } from 'lucide-react';
+import { safeFetch } from '@/lib/safeFetch';
 
 const CATEGORIES = ['Theft', 'Assault', 'Murder', 'Cybercrime', 'Fraud', 'Burglary', 'Kidnapping', 'Drug-Related', 'Sexual-Offense', 'Traffic'];
 const STATUSES = ['open', 'under-investigation', 'closed', 'charge-sheeted', 'cancelled'];
@@ -111,7 +112,7 @@ export function Cases() {
 
   // load districts once
   useEffect(() => {
-    fetch('/api/cases/districts').then(r => r.json()).then(setDistricts).catch(() => {});
+    safeFetch<string[]>('/api/cases/districts').then(d => setDistricts(Array.isArray(d) ? d : [])).catch(() => {});
   }, []);
 
   // fetch list
@@ -127,8 +128,7 @@ export function Cases() {
       ...(district !== 'all' && { district }),
       ...(priority !== 'all' && { priority }),
     });
-    fetch(`/api/cases?${params}`)
-      .then(r => r.json())
+    safeFetch(`/api/cases?${params}`)
       .then(d => setData(d))
       .catch(() => setData(null))
       .finally(() => setLoading(false));
@@ -142,8 +142,7 @@ export function Cases() {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setDetailLoading(true);
     setDetail(null);
-    fetch(`/api/cases/${selectedId}`)
-      .then(r => r.json())
+    safeFetch(`/api/cases/${selectedId}`)
       .then(d => { if (!cancelled) setDetail(d); })
       .catch(() => { if (!cancelled) setDetail(null); })
       .finally(() => { if (!cancelled) setDetailLoading(false); });

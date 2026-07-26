@@ -6,6 +6,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { StatCard } from '@/components/jurisintel/StatCard';
 import { SectionHeader } from '@/components/jurisintel/SectionHeader';
+import { safeFetch } from '@/lib/safeFetch';
 import {
   FolderOpen,
   AlertCircle,
@@ -130,12 +131,12 @@ export function Dashboard() {
     const fetchData = async () => {
       try {
         const [ov, tr, st, di, ca, cr] = await Promise.all([
-          fetch('/api/stats/overview').then(r => r.json()),
-          fetch('/api/stats/monthly-trend').then(r => r.json()),
-          fetch('/api/stats/by-status').then(r => r.json()),
-          fetch('/api/stats/by-district').then(r => r.json()),
-          fetch('/api/stats/by-category').then(r => r.json()),
-          fetch('/api/cases?priority=critical&limit=5').then(r => r.json()),
+          safeFetch('/api/stats/overview'),
+          safeFetch('/api/stats/monthly-trend'),
+          safeFetch('/api/stats/by-status'),
+          safeFetch('/api/stats/by-district'),
+          safeFetch('/api/stats/by-category'),
+          safeFetch('/api/cases?priority=critical&limit=5'),
         ]);
         if (cancelled) return;
         setOverview(ov);

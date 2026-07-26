@@ -2,9 +2,10 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { DEMO_MODE } from '@/lib/demoMode';
 import { mockFinancialOverview } from '@/lib/mockApiResponses';
+import { demoResponse, apiResponse } from '@/lib/apiResponse';
 
 export async function GET() {
-  if (DEMO_MODE) { return NextResponse.json(mockFinancialOverview()); }
+  if (DEMO_MODE) { return demoResponse(mockFinancialOverview()); }
   try {
     const txns = await db.financialTransaction.findMany({
       select: { amount: true, flagged: true, bank: true },
@@ -31,7 +32,7 @@ export async function GET() {
       }))
       .sort((a, b) => b.amount - a.amount);
 
-    return NextResponse.json({
+    return apiResponse({
       totalTransactions,
       totalAmount: Number(totalAmount.toFixed(2)),
       flaggedCount,
@@ -40,6 +41,6 @@ export async function GET() {
     });
   } catch (err) {
     console.error('[financial/overview]', err);
-    return NextResponse.json(mockFinancialOverview());
+    return demoResponse(mockFinancialOverview());
   }
 }

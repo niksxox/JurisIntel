@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { DEMO_MODE } from '@/lib/demoMode';
+import { demoResponse, apiResponse } from '@/lib/apiResponse';
 import { mockForecast } from '@/lib/mockApiResponses';
 
 function monthKey(d: Date): string {
@@ -8,7 +9,7 @@ function monthKey(d: Date): string {
 }
 
 export async function GET() {
-  if (DEMO_MODE) { return NextResponse.json(mockForecast()); }
+  if (DEMO_MODE) { return demoResponse(mockForecast()); }
   try {
     const cases = await db.case.findMany({
       where: { registeredAt: { gte: new Date('2021-01-01T00:00:00Z') } },
@@ -72,7 +73,7 @@ export async function GET() {
       });
     }
 
-    return NextResponse.json({
+    return apiResponse({
       historical,
       forecast,
       method: 'exponential-smoothing',
@@ -80,7 +81,7 @@ export async function GET() {
     });
   } catch (err) {
     console.error('[prediction/forecast]', err);
-    return NextResponse.json(mockForecast());
+    return demoResponse(mockForecast());
   }
 }
 

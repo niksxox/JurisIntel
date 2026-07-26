@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { DEMO_MODE } from '@/lib/demoMode';
+import { demoResponse, apiResponse } from '@/lib/apiResponse';
 import { mockRiskFactors } from '@/lib/mockApiResponses';
 
 function priorBucket(n: number): string {
@@ -10,7 +11,7 @@ function priorBucket(n: number): string {
 }
 
 export async function GET() {
-  if (DEMO_MODE) { return NextResponse.json(mockRiskFactors()); }
+  if (DEMO_MODE) { return demoResponse(mockRiskFactors()); }
   try {
     const accused = await db.accused.findMany({
       select: { priorConvictions: true, occupation: true, riskScore: true },
@@ -53,9 +54,9 @@ export async function GET() {
       })),
     ].sort((a, b) => b.avgRisk - a.avgRisk);
 
-    return NextResponse.json(data);
+    return apiResponse(data);
   } catch (err) {
     console.error('[socio/risk-factors]', err);
-    return NextResponse.json(mockRiskFactors());
+    return demoResponse(mockRiskFactors());
   }
 }

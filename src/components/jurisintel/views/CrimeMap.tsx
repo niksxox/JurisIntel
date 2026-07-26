@@ -7,6 +7,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { MapPin, Flame, Layers, TrendingUp } from 'lucide-react';
+import { safeFetch } from '@/lib/safeFetch';
 
 // ── Types ──────────────────────────────────────────────────────────────
 type DistrictRow = { district: string; count: number };
@@ -106,12 +107,6 @@ const DENSITY_LABELS: Record<string, string> = {
   LOW: 'text-ops-emerald',
 };
 
-async function getJSON<T>(url: string): Promise<T> {
-  const r = await fetch(url);
-  if (!r.ok) throw new Error(`Failed: ${url}`);
-  return (await r.json()) as T;
-}
-
 // ── Main component ─────────────────────────────────────────────────────
 export function CrimeMap() {
   const [districts, setDistricts] = useState<DistrictRow[] | null>(null);
@@ -123,8 +118,8 @@ export function CrimeMap() {
     (async () => {
       try {
         const [d, h] = await Promise.all([
-          getJSON<DistrictRow[]>('/api/stats/by-district?all=true'),
-          getJSON<HotspotRow[]>('/api/trends/hotspots'),
+          safeFetch<DistrictRow[]>('/api/stats/by-district?all=true'),
+          safeFetch<HotspotRow[]>('/api/trends/hotspots'),
         ]);
         if (cancelled) return;
         setDistricts(d);

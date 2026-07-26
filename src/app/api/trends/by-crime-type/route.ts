@@ -2,10 +2,11 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { DEMO_MODE } from '@/lib/demoMode';
 import { mockByCrimeType } from '@/lib/mockApiResponses';
+import { demoResponse, apiResponse } from '@/lib/apiResponse';
 
 export async function GET() {
   if (DEMO_MODE) {
-    return NextResponse.json(mockByCrimeType());
+    return demoResponse(mockByCrimeType());
   }
   try {
     const rows = await db.case.groupBy({
@@ -20,9 +21,9 @@ export async function GET() {
         percentage: total > 0 ? Number(((r._count._all / total) * 100).toFixed(1)) : 0,
       }))
       .sort((a, b) => b.count - a.count);
-    return NextResponse.json(data);
+    return apiResponse(data);
   } catch (err) {
     console.error('[trends/by-crime-type]', err);
-    return NextResponse.json(mockByCrimeType());
+    return demoResponse(mockByCrimeType());
   }
 }

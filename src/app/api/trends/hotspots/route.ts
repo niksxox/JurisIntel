@@ -2,10 +2,11 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { DEMO_MODE } from '@/lib/demoMode';
 import { mockTrendsHotspots } from '@/lib/mockApiResponses';
+import { demoResponse, apiResponse } from '@/lib/apiResponse';
 
 export async function GET() {
   if (DEMO_MODE) {
-    return NextResponse.json(mockTrendsHotspots());
+    return demoResponse(mockTrendsHotspots());
   }
   try {
     // Aggregate by district: count, avg severity, top category
@@ -41,9 +42,9 @@ export async function GET() {
       topCategory: topCatByDistrict.get(r.district)?.category ?? null,
     }));
 
-    return NextResponse.json(data);
+    return apiResponse(data);
   } catch (err) {
     console.error('[trends/hotspots]', err);
-    return NextResponse.json(mockTrendsHotspots());
+    return demoResponse(mockTrendsHotspots());
   }
 }

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { DEMO_MODE } from '@/lib/demoMode';
 import { mockCaseDetail } from '@/lib/mockApiResponses';
+import { demoResponse, apiResponse } from '@/lib/apiResponse';
 
 export async function GET(
   _req: Request,
@@ -10,9 +11,7 @@ export async function GET(
   const { id } = await params;
 
   if (DEMO_MODE) {
-    const data = mockCaseDetail(id);
-    if (!data) return NextResponse.json({ error: 'Case not found' }, { status: 404 });
-    return NextResponse.json(data);
+    return demoResponse(mockCaseDetail(id) || {});
   }
 
   try {
@@ -42,12 +41,12 @@ export async function GET(
       relatedCase: e.toCase,
     }));
 
-    return NextResponse.json({
+    return apiResponse({
       ...caseRecord,
       networkEdgesFrom: edges,
     });
   } catch (err) {
     console.error('[cases/[id]]', err);
-    return NextResponse.json(mockCaseDetail(id) || {});
+    return demoResponse(mockCaseDetail(id) || {});
   }
 }

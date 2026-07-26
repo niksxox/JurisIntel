@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { DEMO_MODE } from '@/lib/demoMode';
+import { demoResponse, apiResponse } from '@/lib/apiResponse';
 import { mockWantedList } from '@/lib/mockApiResponses';
 
 export async function GET() {
-  if (DEMO_MODE) { return NextResponse.json(mockWantedList()); }
+  if (DEMO_MODE) { return demoResponse(mockWantedList()); }
   try {
     const wanted = await db.accused.findMany({
       where: { isWanted: true },
@@ -38,9 +39,9 @@ export async function GET() {
       case: o.case,
     }));
 
-    return NextResponse.json(data);
+    return apiResponse(data);
   } catch (err) {
     console.error('[risk/wanted]', err);
-    return NextResponse.json(mockWantedList());
+    return demoResponse(mockWantedList());
   }
 }

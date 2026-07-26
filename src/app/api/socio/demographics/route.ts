@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { DEMO_MODE } from '@/lib/demoMode';
+import { demoResponse, apiResponse } from '@/lib/apiResponse';
 import { mockDemographics } from '@/lib/mockApiResponses';
 
 function ageBucket(age: number): string {
@@ -12,7 +13,7 @@ function ageBucket(age: number): string {
 }
 
 export async function GET() {
-  if (DEMO_MODE) { return NextResponse.json(mockDemographics()); }
+  if (DEMO_MODE) { return demoResponse(mockDemographics()); }
   try {
     const accused = await db.accused.findMany({
       select: { age: true, gender: true, occupation: true },
@@ -30,7 +31,7 @@ export async function GET() {
       if (a.occupation) occupationMap.set(a.occupation, (occupationMap.get(a.occupation) || 0) + 1);
     }
 
-    return NextResponse.json({
+    return apiResponse({
       ageGroups: ageBuckets.map((range) => ({ range, count: ageMap.get(range) || 0 })),
       gender: Array.from(genderMap.entries())
         .map(([gender, count]) => ({ gender, count }))
@@ -41,6 +42,6 @@ export async function GET() {
     });
   } catch (err) {
     console.error('[socio/demographics]', err);
-    return NextResponse.json(mockDemographics());
+    return demoResponse(mockDemographics());
   }
 }

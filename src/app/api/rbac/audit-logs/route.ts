@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { DEMO_MODE } from '@/lib/demoMode';
+import { demoResponse, apiResponse } from '@/lib/apiResponse';
 import { mockAuditLogs } from '@/lib/mockApiResponses';
 
 export async function GET() {
-  if (DEMO_MODE) { return NextResponse.json(mockAuditLogs()); }
+  if (DEMO_MODE) { return demoResponse(mockAuditLogs()); }
   try {
     const logs = await db.auditLog.findMany({
       orderBy: { createdAt: 'desc' },
@@ -25,9 +26,9 @@ export async function GET() {
       user: l.user ? { name: l.user.name, username: l.user.username } : null,
     }));
 
-    return NextResponse.json(data);
+    return apiResponse(data);
   } catch (err) {
     console.error('[rbac/audit-logs]', err);
-    return NextResponse.json(mockAuditLogs());
+    return demoResponse(mockAuditLogs());
   }
 }

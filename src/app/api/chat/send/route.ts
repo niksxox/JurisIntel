@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { DEMO_MODE } from '@/lib/demoMode';
 import { mockChatSend } from '@/lib/mockApiResponses';
+import { demoResponse, apiResponse } from '@/lib/apiResponse';
 
 const SYSTEM_PROMPT =
   'You are JURISINTEL, an AI intelligence assistant for the Karnataka State Police crime dashboard. ' +
@@ -145,8 +146,7 @@ export async function POST(req: NextRequest) {
     }
 
     if (DEMO_MODE) {
-      const result = mockChatSend(message!);
-      return NextResponse.json(result);
+      return demoResponse(mockChatSend(message!));
     }
 
     // Resolve user
@@ -158,7 +158,7 @@ export async function POST(req: NextRequest) {
         user = await db.user.findFirst();
       }
       if (!user) {
-        return NextResponse.json({ error: 'No users available in DB' }, { status: 500 });
+        return demoResponse(mockChatSend(message));
       }
     }
 
@@ -231,13 +231,13 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return NextResponse.json({
+    return apiResponse({
       sessionId: session.id,
       reply,
       context: contextSummary,
     });
   } catch (err) {
     console.error('[chat/send]', err);
-    return NextResponse.json(mockChatSend(message || 'overview'));
+    return demoResponse(mockChatSend(message || 'overview'));
   }
 }

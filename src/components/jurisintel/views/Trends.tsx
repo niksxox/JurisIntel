@@ -22,6 +22,7 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { CalendarDays, Activity, MapPin, Crosshair } from 'lucide-react';
+import { safeFetch } from '@/lib/safeFetch';
 
 // ── Types ──────────────────────────────────────────────────────────────
 type YearlyRow = { year: string; count: number };
@@ -75,12 +76,6 @@ const severityBadge: Record<string, { label: string; cls: string }> = {
   low: { label: 'LOW', cls: 'border-ops-emerald/40 text-ops-emerald bg-ops-emerald/10' },
 };
 
-async function getJSON<T>(url: string): Promise<T> {
-  const r = await fetch(url);
-  if (!r.ok) throw new Error(`Failed: ${url}`);
-  return (await r.json()) as T;
-}
-
 // ── Loading skeleton ──────────────────────────────────────────────────
 function ChartSkeleton({ height = 280 }: { height?: number }) {
   return <Skeleton className="w-full" style={{ height }} />;
@@ -127,11 +122,11 @@ export function Trends() {
     (async () => {
       try {
         const [y, m, ct, mo, hs] = await Promise.all([
-          getJSON<YearlyRow[]>('/api/trends/yearly'),
-          getJSON<MonthlyRow[]>('/api/stats/monthly-trend'),
-          getJSON<CrimeTypeRow[]>('/api/trends/by-crime-type'),
-          getJSON<ModusRow[]>('/api/trends/modus-operandi'),
-          getJSON<HotspotRow[]>('/api/trends/hotspots'),
+          safeFetch<YearlyRow[]>('/api/trends/yearly'),
+          safeFetch<MonthlyRow[]>('/api/stats/monthly-trend'),
+          safeFetch<CrimeTypeRow[]>('/api/trends/by-crime-type'),
+          safeFetch<ModusRow[]>('/api/trends/modus-operandi'),
+          safeFetch<HotspotRow[]>('/api/trends/hotspots'),
         ]);
         if (cancelled) return;
         setYearly(y);

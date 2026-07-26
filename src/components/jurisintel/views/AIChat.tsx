@@ -12,6 +12,7 @@ import { Separator } from '@/components/ui/separator';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { SectionHeader } from '@/components/jurisintel/SectionHeader';
 import { getSession } from '@/lib/auth';
+import { safeFetch } from '@/lib/safeFetch';
 
 // ─── Types ───
 interface ContextSummary {
@@ -377,12 +378,8 @@ export function AIChat() {
     let cancelled = false;
     (async () => {
       try {
-        const res = await fetch(
-          `/api/chat/history?sessionId=${encodeURIComponent(sessionId)}`
-        );
-        if (!res.ok) return;
-        const data = await res.json();
-        if (cancelled || !data?.messages?.length) return;
+        const data = await safeFetch<{sessionId:string,messages:any[]}>(`/api/chat/history?sessionId=${encodeURIComponent(sessionId)}`);
+        if (cancelled || !Array.isArray(data?.messages) || !data.messages.length) return;
         setMessages(
           data.messages.map((m: { id: string; role: string; content: string; metadata?: string; createdAt: string }) => {
             let ctx: ContextSummary | undefined;
@@ -452,50 +449,35 @@ export function AIChat() {
       setLoading(true);
 
       try {
-        const res = await fetch('/api/chat/send', {
+      const chatSessionId = sessionId ?? undefined;
+
+        const result = await safeFetch<{sessionId:string;reply:string;context?:any}>('/api/chat/send', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             message: trimmed,
-            sessionId: sessionId ?? undefined,
+            sessionId: chatSessionId,
             username: username ?? undefined,
           }),
         });
 
-        if (!res.ok) {
-          throw new Error(`HTTP ${res.status}`);
-        }
-
-        const data = await res.json();
-        if (!data?.sessionId || !data?.reply) {
-          throw new Error('Invalid response shape');
-        }
+        const reply = result?.reply ?? 'JurisIntel is running in Demo Mode. The PostgreSQL database has not been initialized yet. Responses are generated from the seed dataset.';
+        const newSessionId = result?.sessionId;
 
         // Persist session
-        if (data.sessionId !== sessionId) {
-          setSessionId(data.sessionId);
-          localStorage.setItem(SESSION_KEY, data.sessionId);
+        if (newSessionId && newSessionId !== sessionId) {
+          setSessionId(newSessionId);
+          localStorage.setItem(SESSION_KEY, newSessionId);
         }
 
         const aiMsg: ChatMessage = {
           id: makeId(),
           role: 'assistant',
-          content: data.reply,
+          content: reply,
           createdAt: Date.now(),
-          context: data.context as ContextSummary | undefined,
+          context: result?.context as ContextSummary | undefined,
         };
         setMessages((prev) => [...prev, aiMsg]);
-      } catch (err) {
-        const aiMsg: ChatMessage = {
-          id: makeId(),
-          role: 'assistant',
-          content:
-            'Unable to reach the intelligence service. Please retry the request.',
-          createdAt: Date.now(),
-          error: true,
-        };
-        setMessages((prev) => [...prev, aiMsg]);
-        console.error('[AIChat] sendMessage error:', err);
       } finally {
         setLoading(false);
         // refocus input

@@ -2,9 +2,10 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { DEMO_MODE } from '@/lib/demoMode';
 import { mockStations } from '@/lib/mockApiResponses';
+import { demoResponse, apiResponse } from '@/lib/apiResponse';
 
 export async function GET() {
-  if (DEMO_MODE) { return NextResponse.json(mockStations()); }
+  if (DEMO_MODE) { return demoResponse(mockStations()); }
   try {
     const stations = await db.station.findMany({
       orderBy: { name: 'asc' },
@@ -21,9 +22,9 @@ export async function GET() {
         createdAt: true,
       },
     });
-    return NextResponse.json(stations);
+    return apiResponse(stations);
   } catch (err) {
     console.error('[stations]', err);
-    return NextResponse.json(mockStations());
+    return demoResponse(mockStations());
   }
 }

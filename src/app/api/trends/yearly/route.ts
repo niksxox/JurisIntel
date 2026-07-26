@@ -2,10 +2,11 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { DEMO_MODE } from '@/lib/demoMode';
 import { mockYearlyTrend } from '@/lib/mockApiResponses';
+import { demoResponse, apiResponse } from '@/lib/apiResponse';
 
 export async function GET() {
   if (DEMO_MODE) {
-    return NextResponse.json(mockYearlyTrend());
+    return demoResponse(mockYearlyTrend());
   }
   try {
     const cases = await db.case.findMany({
@@ -19,9 +20,9 @@ export async function GET() {
     const data = Array.from(buckets.entries())
       .map(([year, count]) => ({ year, count }))
       .sort((a, b) => a.year.localeCompare(b.year));
-    return NextResponse.json(data);
+    return apiResponse(data);
   } catch (err) {
     console.error('[trends/yearly]', err);
-    return NextResponse.json(mockYearlyTrend());
+    return demoResponse(mockYearlyTrend());
   }
 }

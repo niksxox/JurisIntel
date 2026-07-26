@@ -16,6 +16,7 @@ import {
   TableCell,
 } from '@/components/ui/table';
 import { Users as UsersIcon, Shield, MapPin, Info } from 'lucide-react';
+import { safeFetch } from '@/lib/safeFetch';
 
 // ── Types ──────────────────────────────────────────────────────────────
 type UserRow = {
@@ -28,12 +29,6 @@ type UserRow = {
 };
 
 // ── Helpers ────────────────────────────────────────────────────────────
-async function getJSON<T>(url: string): Promise<T> {
-  const r = await fetch(url);
-  if (!r.ok) throw new Error(`Failed: ${url}`);
-  return (await r.json()) as T;
-}
-
 function formatDate(iso: string): string {
   const d = new Date(iso);
   const day = String(d.getDate()).padStart(2, '0');
@@ -63,7 +58,7 @@ export function Users() {
     let cancelled = false;
     (async () => {
       try {
-        const data = await getJSON<UserRow[]>('/api/rbac/users');
+        const data = await safeFetch<UserRow[]>('/api/rbac/users');
         if (cancelled) return;
         setUsers(data);
       } catch (e) {

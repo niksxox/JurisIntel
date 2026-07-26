@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { DEMO_MODE } from '@/lib/demoMode';
 import { mockStatsMonthlyTrend } from '@/lib/mockApiResponses';
+import { demoResponse, apiResponse } from '@/lib/apiResponse';
 
 function monthKey(d: Date): string {
   const y = d.getUTCFullYear();
@@ -10,15 +11,11 @@ function monthKey(d: Date): string {
 }
 
 export async function GET(req: NextRequest) {
+  const category = req.nextUrl.searchParams.get('category')?.trim() || undefined;
   if (DEMO_MODE) {
-    return NextResponse.json(
-      mockStatsMonthlyTrend(req.nextUrl.searchParams.get('category')?.trim() || undefined)
-    );
+    return demoResponse(mockStatsMonthlyTrend(category));
   }
   try {
-    const category = req.nextUrl.searchParams.get('category')?.trim() || undefined;
-
-    // Fetch all relevant cases (filter category if provided). registeredAt 2021-01-01 to 2024-12-31.
     const cases = await db.case.findMany({
       where: {
         registeredAt: {
@@ -30,7 +27,6 @@ export async function GET(req: NextRequest) {
       select: { registeredAt: true, category: true },
     });
 
-    // Aggregate by month
     const buckets = new Map<string, { count: number; category?: string }>();
     for (const c of cases) {
       const k = monthKey(c.registeredAt);
@@ -42,7 +38,6 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    // Fill all months 2021-01 .. 2024-12, returning only those with data > 0
     const result: { month: string; count: number; category?: string }[] = [];
     for (let y = 2021; y <= 2024; y++) {
       for (let m = 1; m <= 12; m++) {
@@ -54,11 +49,9 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    return NextResponse.json(result);
+    return apiResponse(result);
   } catch (err) {
     console.error('[stats/monthly-trend]', err);
-    return NextResponse.json(
-      mockStatsMonthlyTrend(req.nextUrl.searchParams.get('category')?.trim() || undefined)
-    );
+    return demoResponse(mockStatsMonthlyTrend(category));
   }
 }

@@ -25,6 +25,7 @@ import {
   Users,
   Link2,
 } from 'lucide-react';
+import { safeFetch } from '@/lib/safeFetch';
 
 // ── Types ──────────────────────────────────────────────────────────────
 type NodeType = 'case' | 'accused' | 'victim';
@@ -168,14 +169,12 @@ export function NetworkGraph() {
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      try {
-        const r = await fetch('/api/network');
-        if (!r.ok) throw new Error('Failed: /api/network');
-        const json = (await r.json()) as NetworkResponse;
-        if (!cancelled) setData(json);
-      } catch (e) {
-        if (!cancelled) setError(e instanceof Error ? e.message : 'Load failed');
+      const data = await safeFetch<{nodes:any[],edges:any[]}>('/api/network');
+      if (cancelled || !data?.nodes?.length) {
+        if (!cancelled) setError('Failed to load network data');
+        return;
       }
+      setData(data as NetworkResponse);
     })();
     return () => {
       cancelled = true;
