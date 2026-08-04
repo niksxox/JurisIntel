@@ -13,6 +13,14 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
 
+  // Handle Leaflet marker images
+  webpack: (config) => {
+    config.resolve = config.resolve || {};
+    config.resolve.alias = config.resolve.alias || {};
+    config.resolve.alias['leaflet'] = 'leaflet/dist/leaflet.js';
+    return config;
+  },
+
   experimental: {}
 };
 

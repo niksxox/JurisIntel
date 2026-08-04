@@ -85,7 +85,7 @@ interface CaseDetail extends CaseRow {
   accused: Array<{ id: string; name: string; age: number; gender: string; occupation: string; address: string; priorConvictions: number; riskScore: number; status: string; isWanted: boolean }>;
   victims: Array<{ id: string; name: string; age: number; gender: string; occupation: string | null; injurySeverity: string | null }>;
   evidence: Array<{ id: string; type: string; description: string; collectedBy: string; status: string }>;
-  networkEdgesFrom: Array<{ id: string; relationType: string; strength: number; relatedCaseId: string }>;
+  networkEdgesFrom: Array<{ id: string; relationType: string; strength: number; relatedCaseId: string; relatedCase: { id: string; firNumber: string; title: string; category: string; district: string } | null }>;
 }
 
 export function Cases() {
@@ -448,8 +448,9 @@ export function Cases() {
                       <Card key={n.id} className="bg-muted/20">
                         <CardContent className="p-3 flex items-center justify-between">
                           <div className="text-xs">
-                            <p className="font-mono text-amber">{n.relatedCaseId.slice(-8).toUpperCase()}</p>
-                            <p className="text-muted-foreground capitalize">{n.relationType.replace('-', ' ')}</p>
+                            <p className="font-mono text-amber">{n.relatedCase?.firNumber || n.relatedCaseId.slice(-8).toUpperCase()}</p>
+                            <p className="text-muted-foreground capitalize">{n.relationType.replace(/-/g, ' ')}</p>
+                            {n.relatedCase?.title && <p className="text-muted-foreground/70 text-[10px] mt-0.5 max-w-[200px] truncate">{n.relatedCase.title}</p>}
                           </div>
                           <div className="flex items-center gap-2">
                             <Progress value={n.strength} className="h-1.5 w-16" />

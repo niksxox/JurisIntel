@@ -73,17 +73,23 @@ export function mockStatsByDistrict(all = false) {
 // Stats: Monthly Trend
 // ==========================================================================
 export function mockStatsMonthlyTrend(category?: string) {
-  const cases = getCases().filter((c) =>
-    c.registeredAt >= new Date('2021-01-01') && c.registeredAt <= new Date('2024-12-31')
-  );
+  const cases = getCases();
   const filtered = category ? cases.filter((c) => c.category === category) : cases;
   const buckets = new Map<string, number>();
   for (const c of filtered) {
     const k = `${c.registeredAt.getUTCFullYear()}-${String(c.registeredAt.getUTCMonth() + 1).padStart(2, '0')}`;
     buckets.set(k, (buckets.get(k) || 0) + 1);
   }
+  // Determine actual date range from the data
+  let minY = Infinity, maxY = -Infinity;
+  for (const c of filtered) {
+    const y = c.registeredAt.getUTCFullYear();
+    if (y < minY) minY = y;
+    if (y > maxY) maxY = y;
+  }
+  if (!isFinite(minY)) { minY = 2022; maxY = 2026; }
   const result: { month: string; count: number; category?: string }[] = [];
-  for (let y = 2021; y <= 2024; y++) {
+  for (let y = minY; y <= maxY; y++) {
     for (let m = 1; m <= 12; m++) {
       const k = `${y}-${String(m).padStart(2, '0')}`;
       const count = buckets.get(k) || 0;
@@ -147,10 +153,13 @@ export function mockCaseDetail(id: string) {
   const evidence = getEvidence().filter((e) => e.caseId === c.id);
   const edges = getEdges().filter((e) => e.caseId === c.id);
   const casesMap = new Map(cases.map((x) => [x.id, x]));
+  const stations = getStations();
+  const stationObj = stations.find((s) => s.id === c.stationId);
   const networkEdgesFrom = edges.map((e) => {
     const related = casesMap.get(e.relatedCaseId);
     return {
       id: e.id, relationType: e.relationType, strength: e.strength,
+      relatedCaseId: e.relatedCaseId,
       relatedCase: related ? { id: related.id, firNumber: related.firNumber, title: related.title, category: related.category, district: related.district } : null,
     };
   });
@@ -159,6 +168,11 @@ export function mockCaseDetail(id: string) {
     incidentDate: c.incidentDate.toISOString(),
     registeredAt: c.registeredAt.toISOString(),
     closedAt: c.closedAt?.toISOString() || null,
+    station: {
+      name: stationObj?.name || c.station.name,
+      district: c.station.district,
+      phone: stationObj?.phone || '+91 80 2200 0000',
+    },
     accused, victims, evidence, networkEdgesFrom,
   };
 }
@@ -385,19 +399,25 @@ export function mockPredictionHotspots() {
 // Prediction: Forecast
 // ==========================================================================
 export function mockForecast() {
-  const cases = getCases().filter((c) => c.registeredAt >= new Date('2021-01-01'));
+  const cases = getCases();
   const buckets = new Map<string, number>();
   for (const c of cases) {
     const k = `${c.registeredAt.getUTCFullYear()}-${String(c.registeredAt.getUTCMonth() + 1).padStart(2, '0')}`;
     buckets.set(k, (buckets.get(k) || 0) + 1);
   }
-  const now = new Date();
-  const endYear = now.getUTCFullYear();
-  const endMonth = now.getUTCMonth() + 1;
+  // Determine actual date range from data
+  let minY = Infinity, maxY = -Infinity, maxM = 0;
+  for (const c of cases) {
+    const y = c.registeredAt.getUTCFullYear();
+    const m = c.registeredAt.getUTCMonth() + 1;
+    if (y < minY) minY = y;
+    if (y > maxY || (y === maxY && m > maxM)) { maxY = y; maxM = m; }
+  }
+  if (!isFinite(minY)) { minY = 2022; maxY = 2026; maxM = 1; }
   const months: string[] = [];
-  for (let y = 2021; y <= endYear; y++) {
-    const m0 = y === 2021 ? 1 : 1;
-    const m1 = y === endYear ? endMonth : 12;
+  for (let y = minY; y <= maxY; y++) {
+    const m0 = y === minY ? 1 : 1;
+    const m1 = y === maxY ? maxM : 12;
     for (let m = m0; m <= m1; m++) months.push(`${y}-${String(m).padStart(2, '0')}`);
   }
   const historical = months.map((m) => ({ month: m, count: buckets.get(m) || 0 }));

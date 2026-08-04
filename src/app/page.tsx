@@ -1,23 +1,42 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, lazy, Suspense } from 'react';
 import { getSession, type Session } from '@/lib/auth';
 import { Login } from '@/components/jurisintel/Login';
 import { Layout, type ViewId } from '@/components/jurisintel/Layout';
 import { Dashboard } from '@/components/jurisintel/views/Dashboard';
 import { Cases } from '@/components/jurisintel/views/Cases';
-import { AIChat } from '@/components/jurisintel/views/AIChat';
 import { Trends } from '@/components/jurisintel/views/Trends';
-import { NetworkGraph } from '@/components/jurisintel/views/NetworkGraph';
-import { CrimeMap } from '@/components/jurisintel/views/CrimeMap';
-import { SocioDemo } from '@/components/jurisintel/views/SocioDemo';
-import { Financial } from '@/components/jurisintel/views/Financial';
-import { Forecast } from '@/components/jurisintel/views/Forecast';
-import { WantedList } from '@/components/jurisintel/views/WantedList';
-import { Stations } from '@/components/jurisintel/views/Stations';
 import { Search } from '@/components/jurisintel/views/Search';
-import { Users } from '@/components/jurisintel/views/Users';
-import { AuditLog } from '@/components/jurisintel/views/AuditLog';
+import { Skeleton } from '@/components/ui/skeleton';
+
+// Lazy-load heavy components for performance
+const AIChat = lazy(() => import('@/components/jurisintel/views/AIChat').then(m => ({ default: m.AIChat })));
+const NetworkGraph = lazy(() => import('@/components/jurisintel/views/NetworkGraph').then(m => ({ default: m.NetworkGraph })));
+const CrimeMap = lazy(() => import('@/components/jurisintel/views/CrimeMap').then(m => ({ default: m.CrimeMap })));
+const SocioDemo = lazy(() => import('@/components/jurisintel/views/SocioDemo').then(m => ({ default: m.SocioDemo })));
+const Financial = lazy(() => import('@/components/jurisintel/views/Financial').then(m => ({ default: m.Financial })));
+const Forecast = lazy(() => import('@/components/jurisintel/views/Forecast').then(m => ({ default: m.Forecast })));
+const WantedList = lazy(() => import('@/components/jurisintel/views/WantedList').then(m => ({ default: m.WantedList })));
+const Stations = lazy(() => import('@/components/jurisintel/views/Stations').then(m => ({ default: m.Stations })));
+const Users = lazy(() => import('@/components/jurisintel/views/Users').then(m => ({ default: m.Users })));
+const AuditLog = lazy(() => import('@/components/jurisintel/views/AuditLog').then(m => ({ default: m.AuditLog })));
+
+function ViewSkeleton() {
+  return (
+    <div className="space-y-6">
+      <Skeleton className="h-6 w-48" />
+      <Skeleton className="h-6 w-72" />
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <Skeleton key={i} className="h-[88px]" />
+        ))}
+      </div>
+      <Skeleton className="h-[300px]" />
+      <Skeleton className="h-[300px]" />
+    </div>
+  );
+}
 
 type AuthState =
   | { status: 'loading' }
@@ -30,8 +49,6 @@ export default function Home() {
 
   useEffect(() => {
     const existing = getSession();
-    // Restoring saved auth session on mount — client-only, runs once.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setAuthState(
       existing
         ? { status: 'authenticated', session: existing }
@@ -62,18 +79,18 @@ export default function Home() {
     switch (currentView) {
       case 'dashboard': return <Dashboard />;
       case 'cases': return <Cases />;
-      case 'chat': return <AIChat />;
+      case 'chat': return <Suspense fallback={<ViewSkeleton />}><AIChat /></Suspense>;
       case 'trends': return <Trends />;
-      case 'network': return <NetworkGraph />;
-      case 'map': return <CrimeMap />;
-      case 'sociodemo': return <SocioDemo />;
-      case 'financial': return <Financial />;
-      case 'forecast': return <Forecast />;
-      case 'wanted': return <WantedList />;
-      case 'stations': return <Stations />;
+      case 'network': return <Suspense fallback={<ViewSkeleton />}><NetworkGraph /></Suspense>;
+      case 'map': return <Suspense fallback={<ViewSkeleton />}><CrimeMap /></Suspense>;
+      case 'sociodemo': return <Suspense fallback={<ViewSkeleton />}><SocioDemo /></Suspense>;
+      case 'financial': return <Suspense fallback={<ViewSkeleton />}><Financial /></Suspense>;
+      case 'forecast': return <Suspense fallback={<ViewSkeleton />}><Forecast /></Suspense>;
+      case 'wanted': return <Suspense fallback={<ViewSkeleton />}><WantedList /></Suspense>;
+      case 'stations': return <Suspense fallback={<ViewSkeleton />}><Stations /></Suspense>;
       case 'search': return <Search />;
-      case 'users': return <Users />;
-      case 'audit': return <AuditLog />;
+      case 'users': return <Suspense fallback={<ViewSkeleton />}><Users /></Suspense>;
+      case 'audit': return <Suspense fallback={<ViewSkeleton />}><AuditLog /></Suspense>;
       default: return <Dashboard />;
     }
   };

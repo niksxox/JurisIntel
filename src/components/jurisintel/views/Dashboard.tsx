@@ -13,6 +13,7 @@ import {
   Scale,
   Users,
   AlertTriangle,
+  CheckCircle2,
 } from 'lucide-react';
 import {
   LineChart,
@@ -166,9 +167,10 @@ export function Dashboard() {
         <span className="font-mono-label text-[10px]">LAST SYNC: {lastSync} IST</span>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-        <StatCard label="Total Cases" value={overview?.totalCases ?? '—'} icon={<FolderOpen className="w-5 h-5" />} trend={overview ? `+${overview.totalDistricts} districts` : undefined} />
+      <div className="grid grid-cols-2 lg:grid-cols-6 gap-4">
+        <StatCard label="Total Cases" value={overview?.totalCases ?? '—'} icon={<FolderOpen className="w-5 h-5" />} trend={overview ? `${overview.totalDistricts} districts` : undefined} />
         <StatCard label="Open Cases" value={overview?.openCases ?? '—'} icon={<AlertCircle className="w-5 h-5" />} severity="warning" trend={overview ? `${Math.round((overview.openCases / overview.totalCases) * 100)}% of total` : undefined} />
+        <StatCard label="Closed Cases" value={overview?.closedCases ?? '—'} icon={<CheckCircle2 className="w-5 h-5" />} trend={overview ? `${Math.round((overview.closedCases / overview.totalCases) * 100)}% disposed` : undefined} />
         <StatCard label="Conviction Rate" value={`${overview?.convictionRate ?? '—'}%`} icon={<Scale className="w-5 h-5" />} />
         <StatCard label="Repeat Offenders" value={overview?.repeatOffenders ?? '—'} icon={<Users className="w-5 h-5" />} />
         <StatCard label="Critical Cases" value={overview?.criticalCases ?? '—'} icon={<AlertTriangle className="w-5 h-5" />} severity="critical" />
@@ -177,7 +179,7 @@ export function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <Card className="ops-border lg:col-span-2">
           <CardContent className="p-4">
-            <SectionHeader title="Monthly Case Trend" subtitle="Case registrations per month (2021-2024)" />
+            <SectionHeader title="Monthly Case Trend" subtitle="Case registrations per month" />
             <div className="h-72">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={trend} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
@@ -295,8 +297,8 @@ function DashboardSkeleton() {
   return (
     <div className="space-y-6">
       <div className="flex justify-end"><Skeleton className="h-4 w-32" /></div>
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-        {Array.from({ length: 5 }).map((_, i) => (
+      <div className="grid grid-cols-2 lg:grid-cols-6 gap-4">
+        {Array.from({ length: 6 }).map((_, i) => (
           <Card key={i} className="ops-border"><CardContent className="p-4"><Skeleton className="h-3 w-20 mb-2" /><Skeleton className="h-8 w-16" /></CardContent></Card>
         ))}
       </div>
