@@ -711,9 +711,19 @@ export function mockChatSend(message: string) {
   const wanted = getAccused().filter((a) => a.isWanted).length;
   const ml = message.toLowerCase();
 
-  let reply = DEMO_BANNER + '\n\n';
+  let reply = '';
 
-  if (ml.includes('theft') || ml.includes('steal') || ml.includes('robbery')) {
+  if (ml.includes('how many') || ml.includes('total') || ml.includes('overview') || ml.includes('summary')) {
+    reply += `**JurisIntel System Overview:**\n\n`;
+    reply += `- **Total Cases**: ${total}\n`;
+    reply += `- **Open Cases**: ${open}\n`;
+    reply += `- **Closed Cases**: ${closed}\n`;
+    reply += `- **Charge-sheeted**: ${cases.filter(c => c.status === 'charge-sheeted').length}\n`;
+    reply += `- **Critical Priority**: ${critical}\n`;
+    reply += `- **Wanted Offenders**: ${wanted}\n`;
+    reply += `- **Active Stations**: ${getStations().filter(s => s.activeCases > 0).length}\n\n`;
+    reply += `Ask me about specific categories (theft, murder, cybercrime, drugs), districts, trends, or wanted offenders for detailed analysis.`;
+  } else if (ml.includes('theft') || ml.includes('steal') || ml.includes('robbery')) {
     const theftCases = cases.filter((c) => c.category === 'Theft');
     reply += `**Theft Analysis:** There are **${theftCases.length}** theft cases in the database (${Math.round((theftCases.length / total) * 100)}% of all cases). `;
     reply += `Top districts for theft: ${mockStatsByDistrict(true).filter(d => theftCases.some(tc => tc.district === d.district)).slice(0, 3).map(d => `${d.district} (${d.count})`).join(', ')}. `;
@@ -792,7 +802,7 @@ export function mockChatHistory(_sessionId: string) {
     sessionId: _sessionId,
     messages: [
       { id: '1', role: 'user', content: 'Show me the crime overview for Karnataka.', metadata: null, createdAt: new Date().toISOString() },
-      { id: '2', role: 'assistant', content: DEMO_BANNER + '\n\n**JurisIntel System Overview:**\n\n- **Total Cases**: 3000\n- **Open Cases**: 450\n- **Closed Cases**: 1350\n- **Critical Priority**: 450\n- **Wanted Offenders**: 780\n\nThis data is from the demo seed dataset.', metadata: null, createdAt: new Date().toISOString() },
+      { id: '2', role: 'assistant', content: '**JurisIntel System Overview:**\n\n- **Total Cases**: 3,000\n- **Open Cases**: 450\n- **Closed Cases**: 1,350\n- **Critical Priority**: 450\n- **Wanted Offenders**: 780\n\nThis data is from the demo seed dataset. Ask me about specific categories, districts, or trends for detailed analysis.', metadata: null, createdAt: new Date().toISOString() },
     ],
   };
 }

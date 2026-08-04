@@ -359,6 +359,11 @@ export function Layout({ session, currentView, setView, children }: LayoutProps)
           </div>
         </header>
 
+        {/* ─── Demo Mode Banner ─── */}
+        <div className="demo-banner">
+          DEMO MODE // RESPONSES FROM REALISTIC KARNATAKA CRIME SEED DATASET // NO POSTGRESQL CONNECTION
+        </div>
+
         {/* ─── Content ─── */}
         <main className="flex-1 p-4 md:p-6 overflow-y-auto" role="main">
           <AnimatePresence mode="wait">
